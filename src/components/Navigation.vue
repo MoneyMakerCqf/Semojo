@@ -19,9 +19,9 @@
 
       <el-col :span="2" >
         <el-link
-          href="support.html"
           target="_blank"
           class="navigation_fontsize"
+          @click="toSupport()"
         >Support
         </el-link>
       </el-col>
@@ -116,6 +116,9 @@ export default {
     },
     toProduct(){
       this.$router.push('/product');
+    },
+    toSupport(){
+      this.$router.push('/support');
     },
     toLogin(){
       this.$router.push('/');

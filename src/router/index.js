@@ -46,6 +46,6 @@ export default new Router({
       path: '/:name/userpage',
       name: 'Profile',
       component: Profile,
-    }
+    },
   ]
 })
