@@ -146,7 +146,7 @@ export default {
     }
   },
   mounted() {
-    if(this.$root.is_login) {
+    if(localStorage.getItem('Authorization')) {
       this.$axios({
         method: 'get',
         url: '/products',
@@ -160,7 +160,6 @@ export default {
         if (res.data['code'] == 20200) {
           let datalist = [];
           datalist = res.data['data'];
-          console.log(datalist);
           for (let i = 0, length = datalist.length; i < length; i++) {
             let product = {
               id: i + 1,
@@ -173,7 +172,6 @@ export default {
               description: datalist[i].outline,
               DBid: datalist[i].productId,
             }
-            console.log(product.name);
             this.list.push(product);
             this.conditional_list.push(product);
           }

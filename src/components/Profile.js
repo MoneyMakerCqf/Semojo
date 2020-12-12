@@ -106,7 +106,7 @@ export default {
 
     //获取用户信息
     getProfile: function () {
-      axios({
+      this.$axios({
         method: 'get',
         url: '/customer/' + this.username + '/userpage/info',
       }).then(res => {  //res是返回结果
@@ -132,7 +132,7 @@ export default {
 
     //获取用户已购买的产品的信息
     getPurchased: function () {
-      axios({
+      this.$axios({
         method: 'get',
         url: '/customer/' + this.username + '/userpage/products',
       }).then(res => {  //res是返回结果
@@ -159,7 +159,7 @@ export default {
     //更新用户信息
     updateProfile: function () {
       //发送修改后的信息
-      axios.put('/info/' + this.username, this.origin).then(res => {
+      this.$axios.put('/info/' + this.username, this.origin).then(res => {
         if (res.data.code === 10200) {
           //console.log(res);
           this.$message('上传成功');
@@ -172,7 +172,7 @@ export default {
 
     //获取申请成为contributor的用户列表
     getPermissions: function () {
-      axios({
+      this.$axios({
         method: 'get',
         url: '/admin/' + this.username + '/userpage/authlist',
       }).then(res => {  //res是返回结果
@@ -206,15 +206,15 @@ export default {
       fd.append('fixed_price', this.newProduct.fixed_price);
       fd.append('authority', " ")
 
-      axios.post('./product', fd).then(res => {
+      this.$axios.post('./product', fd).then(res => {
           console.log(res)
           if (res.data['code'] == 20200) {
-            axios({
+            this.$axios({
               method: 'get',
               url: './userpage/contributed_products',
             }).then(res => {  //res是返回结果
               console.log(res);
-              axios({
+              ({
                 method: 'get',
                 url: './userpage/contributed_products',
               }).then(res => {  //res是返回结果
