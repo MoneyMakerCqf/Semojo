@@ -5,6 +5,7 @@ import Home from "../components/Home";
 import register from "../components/register";
 import product from "../components/product";
 import search from "../components/search";
+import Profile from "../components/Profile.vue";
 
 Vue.use(Router)
 
@@ -40,5 +41,11 @@ export default new Router({
       name: 'search',
       component: search,
     },
+    //用户界面
+    {
+      path: '/:name/userpage',
+      name: 'Profile',
+      component: Profile,
+    }
   ]
 })

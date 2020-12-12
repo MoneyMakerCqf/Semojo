@@ -1,0 +1,165 @@
+<div class="personalCenter">
+  <br/>
+  <el-row>
+    <el-col :span="3" :offset="6">
+      <div class="avatar-image">
+        <el-avatar :size="80" :src="require('../assets/bg3.jpg')"></el-avatar>
+      </div>
+    </el-col>
+    <el-col :span="1">
+      <h1>{{username}}</h1>
+    </el-col>
+  </el-row>
+  <br/>
+  <el-row>
+    <el-col :span="15" :offset="5">
+      <div>
+        <el-tabs :tab-position="tabPosition" v-model="activeTab" style="height: 700px;" type="border-card" @tab-click="handleClick">
+          <el-tab-pane label="Your Profile" name="first">
+            <h1 class="titleName">Public Profile</h1>
+            <el-divider></el-divider>
+            <el-form class="profile" ref="form" :model="origin" size="mini">
+              <el-form-item label="">
+                <el-input v-model="origin.address" placeholder="Address">
+                  <template slot="prepend">Address</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="">
+                <el-input v-model="origin.email" placeholder="E-mail">
+                  <template slot="prepend">Email</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="">
+                <el-input v-model="origin.phoneNum" placeholder="Phone Number">
+                  <template slot="prepend">Phone Num</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="">
+                <el-input v-model="origin.qqNum" placeholder="QQ Number">
+                  <template slot="prepend">QQ Num</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="">
+                <el-input v-model="origin.weChatNum" placeholder="WeChat Number">
+                  <template slot="prepend">WeChat Num</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item size="large">
+                <el-button type="success" @click="updateProfile" size="mini">Update Profile</el-button>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+          <el-tab-pane label="Manage Products" name="second" v-if="role > 2">
+            <h1 class="titleName">Manage Products</h1>
+            <el-divider></el-divider>
+            <ul class="list">
+              <li class="list-item" v-for="product in manage">
+                <div style="display: block;margin-left:5%;margin-top:2%;width: 60%">
+                  <h1 style="font-size: 1rem;margin-left: 20%;vertical-align: middle;display: table-cell;">{{product.name}}</h1>
+                </div>
+                <div style="display: block;width:50%;margin-left:0%;margin-top: 6px;margin-bottom: 5px">
+                  <el-button type="primary" size="mini">Approve</el-button>
+                  <el-button type="plain" size="mini">Disapprove</el-button>
+                </div>
+              </li>
+            </ul>
+          </el-tab-pane>
+          <el-tab-pane label="Permission Application" name="third" v-if="role > 2">
+            <h1 class="titleName">Contributor Permission Application</h1>
+            <el-divider></el-divider>
+            <ul class="list">
+              <li class="list-item" v-for="(permission, index) in permissions">
+                <div style="display: block;margin-left:5%;margin-top:2%;width: 60%" v-bind:class="permission.name">
+                  <h1 style="font-size: 1rem;margin-left: 20%;vertical-align: middle;display: table-cell;">{{ permission.name }}</h1>
+                </div>
+                <div style="display: block;width:50%;margin-left:0%;margin-top: 6px;margin-bottom: 5px">
+                  <el-button type="primary" size="mini" @click="clickApprove($event)">Approve
+                  </el-button>
+                  <el-button type="plain" size='mini' @click="clickDisapprove($event)"
+                  >Disapprove
+                  </el-button>
+                </div>
+              </li>
+            </ul>
+          </el-tab-pane>
+          <el-tab-pane label="Create New Product" name="fourth" v-if="role > 1">
+            <h1 class="titleName">Create New Product</h1>
+            <el-divider></el-divider>
+            <el-form :model="newProduct" size="mini">
+              <el-form-item label="">
+                <el-input v-model="newProduct.productName" placeholder="Product Name...">
+                  <template slot="prepend">Product Name</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="">
+                <el-input v-model="newProduct.description" placeholder="Description...">
+                  <template slot="prepend">Description</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="">
+                <el-input v-model="newProduct.fixed_price" placeholder="Fixed Price...">
+                  <template slot="prepend">Fixed Price</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item size="large">
+                <el-button type="success" @click="createProduct" size="mini">Create New Product</el-button>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+          <el-tab-pane label="Products Contributed" name="fifth" v-if="role > 1">
+            <h1 class="titleName">Products Contributed</h1>
+            <el-divider></el-divider>
+            <ul class="list">
+              <li class="list-item" v-for="(product, index) in productsContributed">
+                <div style="display: block;margin-left:5%;margin-top:2%;width: 60%"
+                     v-bind:class="product.productId">
+                  <h1 style="font-size: 1rem;margin-left: 20%;vertical-align: middle;display: table-cell;">
+                    {{product.name}}</h1>
+                </div>
+                <div style="display: block;width:50%;margin-left:15%;margin-top: 6px;margin-bottom: 5px">
+                  <a>
+                    <el-button type="primary" size="mini" @click="edit(index)">Edit</el-button>
+                  </a>
+                  <el-button type="plain" size='mini' @click="clickReview($event)"
+                  >Delete
+                  </el-button>
+                </div>
+              </li>
+            </ul>
+          </el-tab-pane>
+          <el-tab-pane label="Products Purchased" name="sixth">
+            <h1 class="titleName">Products Purchased</h1>
+            <el-divider></el-divider>
+            <ul class="list">
+              <li class="list-item" v-for="(product, index) in productsPurchased">
+                <div style="display: block;margin-left:5%;margin-top:2%;width: 60%" v-bind:class="product.name">
+                  <h1 style="font-size: 1rem;margin-left: 20%;vertical-align: middle;display: table-cell;">{{product.name}}</h1>
+                </div>
+                <div style="display: block;width:40%;margin-left:15%;margin-top: 6px;margin-bottom: 5px">
+                  <el-button type="primary" size="mini" @click="clickDownload($event)">Download</el-button>
+                </div>
+              </li>
+            </ul>
+          </el-tab-pane>
+          <el-tab-pane label="To be Contributor" name="seventh" v-if="role === 1">
+            <h1 class="titleName">Apply to be a Contributor</h1>
+            <el-divider></el-divider>
+            <el-collapse v-model="activeName" accordion>
+              <el-collapse-item title="If You are a Customer" name="1">
+                <p>You can only browse and buy products</p>
+              </el-collapse-item>
+              <el-collapse-item title="If You are a Contributor" name="2">
+                <p>Not only do you have all the rights of your customers, </p>
+                <p>but you can also edit and upload your own products</p>
+              </el-collapse-item>
+            </el-collapse>
+            <br/><br/>
+            <el-button type="success" size="mini" v-on:click="permission">
+              Apply For Contributor
+            </el-button>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </el-col>
+  </el-row>
+</div>
