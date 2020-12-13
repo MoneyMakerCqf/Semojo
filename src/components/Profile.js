@@ -6,7 +6,7 @@ export default {
     return {
       tabPosition: 'left',
       //1-customer 2-contributor 3-administrator
-      role: 3,
+      role: 1,
       username: this.$route.params.name,
       activeName: '',
       activeTab: 'first',
@@ -15,6 +15,7 @@ export default {
       //个人信息
       origin: {
         name: 'Paul',
+        role: 1,
         address: 'SUSTECH',
         email: '3522715211@qq.com',
         gender: 'Male',
@@ -121,6 +122,8 @@ export default {
           this.origin.qqNum = temp.qqNum;
           this.origin.weChatNum = temp.weChatNum;
           this.origin.portrait = temp.portrait;
+          this.role = temp.role;
+          this.origin.role = temp.role;
         } else {
           this.$message({
             message: 'connect wrong',
@@ -138,11 +141,12 @@ export default {
       }).then(res => {  //res是返回结果
         console.log(res);
         if (res.data['code'] == "200") {
+          this.productsPurchased = [];
           let datalist = res.data['data'];
           for (let i = 0, length = datalist.length; i < length; i++) {
             let product = {
-              productId: datalist[i].productId,
-              productName: datalist[i].productName,
+              id: datalist[i].productId,
+              name: datalist[i].productName,
               url: 'www.baidu.com',
             }
             this.productsPurchased.push(product);
@@ -162,11 +166,14 @@ export default {
       this.$axios.put('/info/' + this.username, this.origin).then(res => {
         if (res.data.code === 10200) {
           //console.log(res);
-          this.$message('上传成功');
-          this.getProfile;
+          this.$message('成功更新个人信息');
+          this.getProfile();
         } else {
           this.$message('失败')
         }
+      }).catch(function (error) {
+        //如果邮箱已被使用会报错
+        console.log(error);
       })
     },
 
@@ -198,7 +205,6 @@ export default {
 
     //创建新产品
     creatNewProduct: function () {
-      this.dialogFormVisible = false;
       let fd = new FormData();
       fd.append('productName', this.newProduct.productName);
       fd.append('username', this.username);
