@@ -49,7 +49,16 @@
               </el-form-item>
             </el-form>
           </el-tab-pane>
-          <el-tab-pane label="Manage Products" name="second" v-if="role > 2">
+          <el-tab-pane label="Jenkins" name="jenkins" v-if="role == 3">
+            <h1 class="titleName">Jenkins</h1>
+            <el-divider></el-divider>
+            <el-link
+              href="http://47.102.206.216:8082/"
+              target="_blank"
+            >Jenkins
+            </el-link>
+          </el-tab-pane>
+          <el-tab-pane label="Manage Products" name="second" v-if="role == 3">
             <h1 class="titleName">Manage Products</h1>
             <el-divider></el-divider>
             <ul class="list">
@@ -64,7 +73,7 @@
               </li>
             </ul>
           </el-tab-pane>
-          <el-tab-pane label="Permission Application" name="third" v-if="role > 2">
+          <el-tab-pane label="Permission Application" name="third" v-if="role == 3">
             <h1 class="titleName">Contributor Permission Application</h1>
             <el-divider></el-divider>
             <ul class="list">
@@ -82,7 +91,7 @@
               </li>
             </ul>
           </el-tab-pane>
-          <el-tab-pane label="Create New Product" name="fourth" v-if="role > 1">
+          <el-tab-pane label="Create New Product" name="fourth" v-if="role == 2 || role == 3">
             <h1 class="titleName">Create New Product</h1>
             <el-divider></el-divider>
             <el-form :model="newProduct" size="mini">
@@ -106,7 +115,7 @@
               </el-form-item>
             </el-form>
           </el-tab-pane>
-          <el-tab-pane label="Products Contributed" name="fifth" v-if="role > 1">
+          <el-tab-pane label="Products Contributed" name="fifth" v-if="role == 2 || role == 3">
             <h1 class="titleName">Products Contributed</h1>
             <el-divider></el-divider>
             <ul class="list">
@@ -141,7 +150,7 @@
               </li>
             </ul>
           </el-tab-pane>
-          <el-tab-pane label="To be Contributor" name="seventh" v-if="role === 1">
+          <el-tab-pane label="To be Contributor" name="seventh" v-if="role == 1">
             <h1 class="titleName">Apply to be a Contributor</h1>
             <el-divider></el-divider>
             <el-collapse v-model="activeName" accordion>
@@ -154,7 +163,7 @@
               </el-collapse-item>
             </el-collapse>
             <br/><br/>
-            <el-button type="success" size="mini" v-on:click="permission">
+            <el-button type="success" size="mini" v-on:click="applyForContributor">
               Apply For Contributor
             </el-button>
           </el-tab-pane>

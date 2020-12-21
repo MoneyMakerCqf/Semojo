@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 export default {
   name: "Profile",
   data() {
@@ -14,46 +12,24 @@ export default {
 
       //个人信息
       origin: {
-        name: 'Paul',
+        name: '',
         role: 1,
-        address: 'SUSTECH',
-        email: '3522715211@qq.com',
-        gender: 'Male',
-        phoneNum: '13822810293',
-        qqNum: '3522715211',
-        weChatNum: 'zsz100123',
+        address: '',
+        email: '',
+        gender: '',
+        phoneNum: '',
+        qqNum: '',
+        weChatNum: '',
       },
 
       //Products Contributed
-      productsContributed: [
-        {
-          name: 'AI helper',
-        },
-        {
-          name: 'Algorithm helper',
-        }
-      ],
+      productsContributed: [],
 
       //Products Purchased
-      productsPurchased: [
-        {
-          name: 'AI helper'
-        },
-        {
-          name: 'Algorithm helper'
-        }
-      ],
+      productsPurchased: [],
 
       //申请信息
-      permissions: [{
-        name: 'Zhu',
-      },
-        {
-          name: 'Xu',
-        },
-        {
-          name: 'Zhao',
-        }],
+      permissions: [],
 
       //new product
       newProduct: {
@@ -78,28 +54,29 @@ export default {
     //点击标签对应事件
     handleClick(tab, event) {
       console.log(tab, event);
-      if (tab.name == 'first'){
+      if (tab.name == 'first') {
         //获取个人信息
         this.getProfile();
         console.log("first");
-      } else if (tab.name == 'second'){
+      } else if (tab.name == 'second') {
         //manage product
         console.log("second");
-      } else if (tab.name == 'third'){
+      } else if (tab.name == 'third') {
         //permission application
         this.getPermissions();
         console.log("third");
-      } else if (tab.name == 'fourth'){
+      } else if (tab.name == 'fourth') {
         //create new product
         console.log("fourth");
-      } else if (tab.name == 'fifth'){
+      } else if (tab.name == 'fifth') {
         //products contributed
+        this.getContributedProducts();
         console.log("fifth");
-      } else if (tab.name == 'sixth'){
+      } else if (tab.name == 'sixth') {
         //products purchased
         this.getPurchased();
         console.log("sixth");
-      } else if (tab.name == 'seventh'){
+      } else if (tab.name == 'seventh') {
         //To be contributor
         console.log("seventh");
       }
@@ -131,6 +108,38 @@ export default {
           })
         }
       });
+    },
+
+    //申请成为contributor
+    applyForContributor: function () {
+      //发送请求
+      this.$axios.put('/customer/' + this.username + '/userpage/auth').then(res => {
+        if (res.data.code === 200) {
+          //console.log(res);
+          this.$message('请求成功');
+        } else {
+          this.$message('失败');
+        }
+      })
+    },
+
+    //同意用户申请成为contributor
+    clickApprove: function (event) {
+      let choose = event.currentTarget.parentElement.parentElement.firstElementChild.getAttribute("class");
+      this.$axios({
+        method: 'put',
+        url: '/admin/' + this.username + '/userpage/auth',
+        params: {
+          updateType: 'contributor',
+          requiredUser: choose,
+        },
+      }).then(res => {
+        if (res.data['code'] == 200) {
+          this.$message('更新成功')
+        } else {
+          this.$message('更新失败')
+        }
+      })
     },
 
     //获取用户已购买的产品的信息
@@ -186,6 +195,7 @@ export default {
         console.log(res);
         if (res.data['code'] == 200) {
           let datalist = res.data['data'];
+          this.permissions = [];
           for (let i = 0, length = datalist.length; i < length; i++) {
             console.log(datalist[i]);
             let permission = {
@@ -203,7 +213,37 @@ export default {
       });
     },
 
-    //创建新产品
+    //获取contributor贡献的所有产品列表
+    getContributedProducts: function () {
+      this.$axios({
+        method: 'get',
+        url: '/contributor/' + this.username + '/userpage/contributed_products',
+      }).then(res => {  //res是返回结果
+        console.log(res);
+        if (res.data['code'] == 200) {
+          let datalist = res.data['data'];
+          this.productsContributed = [];
+          for (let i = 0, length = datalist.length; i < length; i++) {
+            console.log(datalist[i]);
+            let product = {
+              name: datalist[i].productName,
+              url: "www.baidu.com",
+              productId: datalist[i].productId
+            }
+            this.productsContributed.push(product);
+          }
+        } else {
+          this.$message({
+            message: 'connect wrong',
+            type: 'warning'
+          })
+        }
+      }).catch(function (error) { // 请求失败处理
+        console.log(error);
+      })
+    },
+
+    //创建新产品(有问题）
     creatNewProduct: function () {
       let fd = new FormData();
       fd.append('productName', this.newProduct.productName);
@@ -212,48 +252,15 @@ export default {
       fd.append('fixed_price', this.newProduct.fixed_price);
       fd.append('authority', " ")
 
-      this.$axios.post('./product', fd).then(res => {
+      this.$axios.post('/contributor/' + this.username + '/product', fd).then(res => {
           console.log(res)
           if (res.data['code'] == 20200) {
-            this.$axios({
-              method: 'get',
-              url: './userpage/contributed_products',
-            }).then(res => {  //res是返回结果
-              console.log(res);
-              ({
-                method: 'get',
-                url: './userpage/contributed_products',
-              }).then(res => {  //res是返回结果
-                console.log(res);
-                if (res.data['code'] == 200) {
-                  let datalist = res.data['data'];
-                  for (let i = 0, length = datalist.length; i < length; i++) {
-                    console.log(datalist[i]);
-                    let product = {
-                      name: datalist[i].productName,
-                      url: "./product/" + datalist[i].productId,
-                    }
-                    this.productsContributed.push(product);
-                  }
-                } else {
-                  this.$message({
-                    message: '更新失败',
-                    type: 'warning'
-                  })
-                }
-              }).catch(function (error) { // 请求失败处理
-                console.log(error);
-              });
-            }).catch(function (error) { // 请求失败处理
-              console.log(error);
-            });
-
+            this.$message('成功新建新产品');
           } else {
-            this.$message('失败')
+            this.$message('构建产品失败');
           }
         }
       )
-      //axios传送数据
     },
 
   },
