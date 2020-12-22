@@ -19,29 +19,15 @@
 
       <el-col :span="2" >
         <el-link
+          href="/swagger-ui.html"
           target="_blank"
           class="navigation_fontsize"
-          @click="toSupport()"
         >Support
         </el-link>
       </el-col>
 
-      <el-col :span="2" >
-        <el-link
-          href="forum.html"
-          target="_blank"
-          class="navigation_fontsize"
-        >Forum
-        </el-link>
-      </el-col>
-
-      <el-col :span="2" >
-        <el-link
-          href="/swagger-ui.html"
-          target="_blank"
-          class="navigation_fontsize"
-        >Beta API
-        </el-link>
+      <el-col :span="4">
+        <br>
       </el-col>
 
       <el-col :span="4" :offset="4" v-show="!this.$root.is_login">
