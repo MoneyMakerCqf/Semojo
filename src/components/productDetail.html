@@ -1,10 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+<div class="productPage">
+  <el-row>
+    <el-col :span="4" :offset="1">
+      <h3>{{productName}}</h3>
+    </el-col>
+  </el-row>
+  <el-row>
+    <el-col :span="20" :offset="2">
+      <div>
+        <el-tabs :tab-position="tabPosition" v-model="activeTab" style="height: 700px;" @tab-click="handleClick">
+          <el-tab-pane label="Product Information" name="first">
+            <el-col :span="8" :offset="8">
+            <h1 class="titleName">Product Information</h1>
+            <el-divider></el-divider>
+            <el-form class="productInformation" ref="form" :model="product" size="mini">
+              <el-form-item label="">
+                <el-input v-model="product.currentPrice" placeholder="CurrentPrice" :disabled="true">
+                  <template slot="prepend">Current Price</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="">
+                <el-input v-model="product.price" placeholder="Price" :disabled="true">
+                  <template slot="prepend">Price</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="">
+                <el-input v-model="product.contributor" placeholder="Contributors" :disabled="true">
+                  <template slot="prepend">Contributors</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="">
+                <el-input v-model="product.tags" placeholder="Tags" :disabled="true">
+                  <template slot="prepend">Tags</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="">
+                <el-input v-model="product.status" placeholder="Status" :disabled="true">
+                  <template slot="prepend">Status</template>
+                </el-input>
+              </el-form-item>
+            </el-form>
+              </el-col>
+          </el-tab-pane>
+          <el-tab-pane label="Issues" name="issues"></el-tab-pane>
+          <el-tab-pane label="Comments" name="comments"></el-tab-pane>
+          <el-tab-pane label="Document" name="document"></el-tab-pane>
+        </el-tabs>
+      </div>
+    </el-col>
+  </el-row>
+</div>
 
-</body>
-</html>

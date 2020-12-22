@@ -6,6 +6,7 @@ import register from "../components/register";
 import product from "../components/product";
 import search from "../components/search";
 import Profile from "../components/Profile.vue";
+import productDetail from "../components/productDetail.vue";
 
 Vue.use(Router)
 
@@ -50,6 +51,12 @@ export default new Router({
       path: '/:name/userpage',
       name: 'Profile',
       component: Profile,
+    },
+    //产品详细信息界面
+    {
+      path: '/product/:id',
+      name: 'productDetail',
+      component: productDetail,
     },
   ]
 })
