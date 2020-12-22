@@ -18,28 +18,29 @@
           <el-tab-pane label="Your Profile" name="first">
             <h1 class="titleName">Public Profile</h1>
             <el-divider></el-divider>
-            <el-form class="profile" ref="form" :model="origin" size="mini">
-              <el-form-item label="">
+            <el-form :hide-required-asterisk="true" :label-position="tabPosition" class="demo-ruleForm"
+                     ref="form" :model="origin" :rules="rules" size="mini" method="post">
+              <el-form-item label="" prop="address">
                 <el-input v-model="origin.address" placeholder="Address">
                   <template slot="prepend">Address</template>
                 </el-input>
               </el-form-item>
-              <el-form-item label="">
+              <el-form-item label="" prop="email">
                 <el-input v-model="origin.email" placeholder="E-mail">
                   <template slot="prepend">Email</template>
                 </el-input>
               </el-form-item>
-              <el-form-item label="">
+              <el-form-item label="" prop="phoneNum">
                 <el-input v-model="origin.phoneNum" placeholder="Phone Number">
                   <template slot="prepend">Phone Num</template>
                 </el-input>
               </el-form-item>
-              <el-form-item label="">
+              <el-form-item label="" prop="qqNum">
                 <el-input v-model="origin.qqNum" placeholder="QQ Number">
                   <template slot="prepend">QQ Num</template>
                 </el-input>
               </el-form-item>
-              <el-form-item label="">
+              <el-form-item label="" prop="weChatNum">
                 <el-input v-model="origin.weChatNum" placeholder="WeChat Number">
                   <template slot="prepend">WeChat Num</template>
                 </el-input>
@@ -145,7 +146,7 @@
                   <h1 style="font-size: 1rem;margin-left: 20%;vertical-align: middle;display: table-cell;">{{product.name}}</h1>
                 </div>
                 <div style="display: block;width:40%;margin-left:15%;margin-top: 6px;margin-bottom: 5px">
-                  <el-button type="primary" size="mini" @click="clickDownload($event)">Download</el-button>
+                  <el-button type="primary" size="mini" @click="clickDownload(index)">Download</el-button>
                 </div>
               </li>
             </ul>

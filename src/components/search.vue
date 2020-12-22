@@ -1,7 +1,7 @@
 <template>
   <div style="margin-left: 15%;margin-top: 2%; width: 70%" align="center">
-    <el-tabs tab-position=left style="height: 550px;">
-      <el-tab-pane label="Artifacts" style="height: 550px">
+    <el-tabs tab-position=left style="height: 550px;" v-model="activeTab" @tab-click="handleTabClick">
+      <el-tab-pane label="Products" style="height: 550px" name="Products">
         <div style="margin-top:25px; margin-left:50px;">
           <div style="display:flex">
             <div style="width:50%" align="left"><h4>{{total}} repository results</h4></div>
@@ -55,14 +55,102 @@
           </template>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="Code">
 
+      <el-tab-pane label="Codes" name="Codes">
+        <div style="margin-top:25px; margin-left:50px;">
+          <div style="display:flex">
+            <div style="width:50%" align="left"><h4>{{total}} repository results</h4></div>
+          </div>
+          <template>
+            <div class="infinite-list-wrapper" style="overflow:auto;width:100%;height:350px;">
+              <ul
+                class="list"
+                v-infinite-scroll="load"
+                infinite-scroll-disabled="disabled"
+                style="list-style:none;">
+                <li v-for="item in show_list" class="list-item">
+                  <div align="left">
+                    <i class="el-icon-notebook-2"></i>
+                    <el-link
+                      target="_blank"
+                      style="color:#000;text-decoration:none;"
+                      class=navigation_fontsize
+                      v-bind:href="item.href">
+                      {{item.name}}
+                    </el-link>
+                    <div> Code: {{item.code}}</div>
+                  </div>
+                </li>
+              </ul>
+              <p v-if="loading">loading&nbsp;&nbsp;<i class="el-icon-loading"></i></p>
+            </div>
+          </template>
+        </div>
       </el-tab-pane>
-      <el-tab-pane label="Issues">
 
+      <el-tab-pane label="Issues" name="Issue">
+        <div style="margin-top:25px; margin-left:50px;">
+          <div style="display:flex">
+            <div style="width:50%" align="left"><h4>{{total}} repository results</h4></div>
+          </div>
+          <template>
+            <div class="infinite-list-wrapper" style="overflow:auto;width:100%;height:350px;">
+              <ul
+                class="list"
+                v-infinite-scroll="load"
+                infinite-scroll-disabled="disabled"
+                style="list-style:none;">
+                <li v-for="item in show_list" class="list-item">
+                  <div align="left">
+                    <i class="el-icon-notebook-2"></i>
+                    <el-link
+                      target="_blank"
+                      style="color:#000;text-decoration:none;"
+                      class=navigation_fontsize
+                      v-bind:href="item.href">
+                      {{item.name}}
+                    </el-link>
+                    <div> Issue: {{item.issue}}</div>
+                  </div>
+                </li>
+              </ul>
+              <p v-if="loading">loading&nbsp;&nbsp;<i class="el-icon-loading"></i></p>
+            </div>
+          </template>
+        </div>
       </el-tab-pane>
-      <el-tab-pane label="Discussions">
 
+      <el-tab-pane label="Users" name="Users">
+        <div style="margin-top:25px; margin-left:50px;">
+          <div style="display:flex">
+            <div style="width:50%" align="left"><h4>{{total}} repository results</h4></div>
+          </div>
+          <template>
+            <div class="infinite-list-wrapper" style="overflow:auto;width:100%;height:350px;">
+              <ul
+                class="list"
+                v-infinite-scroll="load"
+                infinite-scroll-disabled="disabled"
+                style="list-style:none;">
+                <li v-for="item in show_list" class="list-item">
+                  <div align="left">
+                    <i class="el-icon-notebook-2"></i>
+                    <el-link
+                      target="_blank"
+                      style="color:#000;text-decoration:none;"
+                      class=navigation_fontsize
+                      v-bind:href="item.href">
+                      {{item.name}}
+                    </el-link>
+                    <div> Address: {{item.address}}</div>
+                    <div> e-mail: {{item.email}}</div>
+                  </div>
+                </li>
+              </ul>
+              <p v-if="loading">loading&nbsp;&nbsp;<i class="el-icon-loading"></i></p>
+            </div>
+          </template>
+        </div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -77,6 +165,8 @@ export default {
       id: 0,
       total: 0,
       value: 'score',
+      activeTab: "Products",
+
 
       show_list: [],
       list: [{id:1, name:"cqfwuwuwu", star:4.5, price:"50", contributors:"cqf,zf", tags:"Java", description:"this is my final ripple, JOJO", DBid:5,update_time:2020/11/24,score:82},
@@ -121,40 +211,158 @@ export default {
         this.loading = false
       }, 1500)
     },
-    searchfor(search) {
-      axios({
-        method: 'post',
-        url: '/search',
-        data: {
-          'search': search,
-        },
-        headers:{
-          "Authorization": 'Bearer '+store.getters.getToken,
-        }
-      })
-    },
     handleSelectChange(val){
 
     },
-    handleCommand(command) {
-      if (command=="userpage"){
-        window.location.href="./"+ store.getters.getUsername + "/userpage";
-      }else if (command=="contributor"){
-        window.location.href="./contributor.html";
+    handleTabClick(tab,event){
+      if(tab.name=="Products"){
+        this.$axios({
+          method: 'get',
+          url: '/products',
+          params: {
+            type: 'Products',
+            search: window.localStorage.getItem("search"),
+          },
+        }).then(res => {  //res是返回结果
+          if (res.data['code']==20200){
+            let datalist = [];
+            datalist = res.data['data'];
+            for (let i = 0, length = datalist.length; i < length; i++) {
+              let product = {
+                id : i+1,
+                name: datalist[i].productName,
+                star: datalist[i].revierStar,
+                price: datalist[i].currentPrice,
+                contributors: datalist[i].creator,
+                language: datalist[i].language,
+                tags: datalist[i].tags,
+                description: datalist[i].outline,
+                DBid: datalist[i].productId,
+                update_time: datalist[i].update_time,
+                score: datalist[i].score,
+                href: datalist[i].href,
+              };
+              this.list.push(product);
+            }
+            this.total = this.list.length;
+            for (let i=this.id; i<5 && i<this.total; i++){
+              this.show_list.push(this.list[i]);
+              this.id++;
+            }
+          }
+        })
+      }else if(tab.name=="Codes"){
+        this.changeToCode()
+        console.log(this.list)
+      }else if(tab.name=="Issues"){
+        this.changeToIssue()
       }else {
-        localStorage.clear();
-        window.location.href="./homepage.html";
+        this.changeToUser()
       }
-    }
+    },
+    changeToCode() {
+      this.show_list = [];
+      this.list = [];
+      this.$axios({
+        method: 'get',
+        url: '/codes',
+        params: {
+          type: 'Codes',
+          search: window.localStorage.getItem("search"),
+        },
+      }).then(res => {  //res是返回结果
+        if (res.data['code']==20200){
+          let datalist = [];
+          datalist = res.data['data'];
+          for (let i = 0, length = datalist.length; i < length; i++) {
+            let product = {
+              id : i+1,
+              name: datalist[i].ProjectName,
+              code: datalist[i].code,
+              href: datalist[i].href,
+            };
+            this.list.push(product);
+          }
+          this.total = this.list.length;
+          for (let i=this.id; i<5 && i<this.total; i++){
+            this.show_list.push(this.list[i]);
+            this.id++;
+          }
+        }
+      })
+    },
+    changeToIssue() {
+      this.show_list = [];
+      this.list = [];
+      this.$axios({
+        method: 'get',
+        url: '/issues',
+        params: {
+          type: 'Issues',
+          search: window.localStorage.getItem("search"),
+        },
+      }).then(res => {  //res是返回结果
+        if (res.data['code']==20200){
+          let datalist = [];
+          datalist = res.data['data'];
+          for (let i = 0, length = datalist.length; i < length; i++) {
+            let product = {
+              id : i+1,
+              name: datalist[i].userName,
+              issue: datalist[i].issue,
+              href: datalist[i].href,
+            };
+            this.list.push(product);
+          }
+          this.total = this.list.length;
+          for (let i=this.id; i<5 && i<this.total; i++){
+            this.show_list.push(this.list[i]);
+            this.id++;
+          }
+        }
+      })
+    },
+    changeToUser() {
+      this.show_list = [];
+      this.list = [];
+      this.$axios({
+        method: 'get',
+        url: '/users',
+        params: {
+          type: 'Users',
+          search: window.localStorage.getItem("search"),
+        },
+      }).then(res => {  //res是返回结果
+        if (res.data['code']==20200){
+          let datalist = [];
+          datalist = res.data['data'];
+          for (let i = 0, length = datalist.length; i < length; i++) {
+            let product = {
+              id : i+1,
+              name: datalist[i].userName,
+              address: datalist[i].address,
+              email: datalist[i].email,
+              href: datalist[i].href,
+            };
+            this.list.push(product);
+          }
+          this.total = this.list.length;
+          for (let i=this.id; i<5 && i<this.total; i++){
+            this.show_list.push(this.list[i]);
+            this.id++;
+          }
+        }
+      })
+    },
   },
   mounted() {
-    this.total = 10;
+    this.total=10;
     this.img_src = window.localStorage.getItem('img_src')
-    axios({
+    this.$axios({
       method: 'get',
       url: '/products',
       params: {
-        type: 'Artifacts',
+        type: 'Products',
         search: window.localStorage.getItem("search"),
       },
     }).then(res => {  //res是返回结果
@@ -174,6 +382,7 @@ export default {
             DBid: datalist[i].productId,
             update_time: datalist[i].update_time,
             score: datalist[i].score,
+            href: datalist[i].href,
           };
           this.list.push(product);
         }

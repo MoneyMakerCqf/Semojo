@@ -1,6 +1,43 @@
 export default {
   name: "Profile",
   data() {
+    var check_address= (rule, value, callback) => {
+      if (this.origin.address.length>=12) {
+        callback(new Error('address should less than 12 characters'));
+      } else {
+        callback();
+      }
+    };
+    var check_email = (rule, value, callback) => {
+      var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
+      if (!reg.test(this.origin.email)) {
+        callback(new Error('please input valid email'));
+      } else {
+        callback();
+      }
+    };
+    var check_phone= (rule, value, callback) => {
+      if (this.origin.phoneNum.length!=11) {
+        callback(new Error('please input valid phone number'));
+      } else {
+        callback();
+      }
+    };
+    var check_QQ= (rule, value, callback) => {
+      if (this.origin.qqNum.length>=15) {
+        callback(new Error('please input valid QQ number'));
+      } else {
+        callback();
+      }
+    };
+    var check_Wechat= (rule, value, callback) => {
+      if (this.origin.weChatNum.length>=15) {
+        callback(new Error('please input valid Wechat number'));
+      } else {
+        callback();
+      }
+    };
+
     return {
       tabPosition: 'left',
       //1-customer 2-contributor 3-administrator
@@ -20,6 +57,30 @@ export default {
         phoneNum: '',
         qqNum: '',
         weChatNum: '',
+      },
+
+      rules: {
+        address: [
+          { required: true, message: 'please input address', trigger: 'blur' },
+          { validator: check_address, trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: 'please input email', trigger: 'blur' },
+          { validator: check_email, trigger: 'blur' }
+        ],
+        phoneNum: [
+          { required: true, message: 'please input phone number', trigger: 'blur' },
+          { validator: check_phone, trigger: 'blur' }
+        ],
+        qqNum: [
+          { required: true, message: 'please input QQ number', trigger: 'blur' },
+          { validator: check_QQ, trigger: 'blur' }
+        ],
+        weChatNum: [
+          { required: true, message: 'please input wechat number', trigger: 'blur' },
+          { validator: check_Wechat, trigger: 'blur' }
+        ],
+
       },
 
       //Products Contributed
@@ -262,7 +323,9 @@ export default {
         }
       )
     },
+    clickDownload(index){
 
+    }
   },
 
   mounted() {
