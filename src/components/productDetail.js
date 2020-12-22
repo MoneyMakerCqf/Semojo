@@ -19,10 +19,49 @@ export default {
         description: 'This is about AI',
         rating: 4.6,
       },
+      tableData: [{
+        testcase: 'testcase_01',
+        describe: 'This is the first testcase of the product, test its performance'
+      }],
     }
   },
 
   methods: {
+    handleClick(tab, event) {
+      //this.tableData = []
+      if(tab.name == 'docker'){
+        this.$axios({
+          method: 'get',
+          url: '',
+        }).then(res => {  //res是返回结果
+          console.log(res);
+          if (res.data['code'] == "200") {
+            let datalist = [];
+            datalist = res.data['data'];
+            for (let i = 0, length = datalist.length; i < length; i++) {
+              let testcase = {
+                testcase: datalist[i].testcasename,
+                describe: datalist[i].describe,
+              }
+              this.tableData.push(testcase);
+            }
+          } else {
+            this.$message({
+              message: 'connect wrong',
+              type: 'warning'
+            })
+          }
+        });
+      }
+    },
+    deleteRow(index, rows) {
+      rows.splice(index, 1);
+    },
+    runtest(index, rows) {
 
+    },
+    addtestcase() {
+
+    }
   }
 }

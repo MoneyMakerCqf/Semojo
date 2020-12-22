@@ -42,7 +42,49 @@
               </el-col>
           </el-tab-pane>
           <el-tab-pane label="Issues" name="issues"></el-tab-pane>
-          <el-tab-pane label="Comments" name="comments"></el-tab-pane>
+          <el-tab-pane label="Docker" name="docker" align="center">
+            <div style="width: 80%">
+            <el-table
+              :data="tableData"
+              max-height="300">
+              <el-table-column
+                fixed
+                prop="testcase"
+                label="Testcase"
+                width="200">
+              </el-table-column>
+              <el-table-column
+                prop="describe"
+                label="Describe"
+                width="500">
+              </el-table-column>
+
+              <el-table-column
+                fixed="right"
+                label="operation"
+                width="200">
+                <template slot-scope="scope">
+                  <el-button
+                    @click="runtest(scope.$index, tableData)"
+                    size="small"
+                    type="primary"
+                    style="font-size:16px">
+                    run
+                  </el-button>
+                  <el-button
+                    @click.native.prevent="deleteRow(scope.$index, tableData)"
+                    type="text"
+                    size="small"
+                    style="font-size:16px">
+                    delete
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+              <br>
+              <el-button type="text" @click="addtestcase()">Add testcase</el-button>
+            </div>
+          </el-tab-pane>
           <el-tab-pane label="Document" name="document"></el-tab-pane>
         </el-tabs>
       </div>
