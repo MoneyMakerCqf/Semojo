@@ -69,7 +69,6 @@
           </span>
           <el-dropdown-menu slot="dropdown" style="margin-top: -10px">
             <el-dropdown-item command="userpage">Your profile</el-dropdown-item>
-            <el-dropdown-item command="contributor">Your products</el-dropdown-item>
             <el-dropdown-item command="logout">sign out</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -92,8 +91,6 @@ export default {
     handleCommand(command) {
       if (command=="userpage"){
         this.$router.push('/'+this.$root.username+'/userpage')
-      }else if (command=="contributor"){
-        this.$router.push('/contributor')
       }else {
         localStorage.clear();
         this.$root.is_login = false

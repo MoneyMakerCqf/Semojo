@@ -7,6 +7,7 @@ export default {
       tabPosition: 'top',
       activeTab: 'first',
       dialogFormVisible: false,
+      productInfoVisible: false,
       testresult: 'Result is: This team pass CS307 OOAD successfully',
       role: localStorage.role,
       product: {
@@ -44,45 +45,54 @@ export default {
           value: '',
         },
         {
-          name:'Price',
+          name: 'Price',
           value: '',
         },
         {
-          name:'Contributors',
+          name: 'Contributors',
           value: '',
         },
         {
-          name:'Tags',
+          name: 'Tags',
           value: '',
         },
         {
-          name:'Status',
+          name: 'Status',
           value: '',
         },
         {
-          name:'Sale Volume',
+          name: 'Sale Volume',
           value: '',
         },
         {
-          name:'Release Date',
+          name: 'Release Date',
           value: '',
         },
         {
-          name:'Recent Update Date',
+          name: 'Recent Update Date',
           value: '',
         },
         {
-          name:'Description',
+          name: 'Description',
           value: '',
         },
         {
-          name:'Ratings',
+          name: 'Ratings',
           value: '',
         },
       ],
+      editProduct: {
+        name: '',
+        currentPrice: '',
+        contributor: [],
+        tags: [],
+        status: '',
+        description: '',
+      },
     }
   },
   methods: {
+    //获取产品信息
     getProductInformation: function () {
       this.$axios({
         method: 'get',
@@ -117,7 +127,76 @@ export default {
         console.log(error);
       });
     },
+
+    //展示产品信息编辑dialog
+    showEditPage: function () {
+      this.productInfoVisible = true;
+      // 将原始个人信息显示在表单上
+      this.editProduct.name = this.product.name;
+      this.editProduct.description = this.product.description;
+      this.editProduct.currentPrice = this.product.currentPrice;
+      this.editProduct.tags = this.product.tags;
+      this.editProduct.status = this.product.status;
+      this.editProduct.contributor = this.product.contributor;
+    },
+
+    //更改产品信息
+    updateInfo: function () {
+      //发送修改后的信息
+      let fd = new FormData();
+      fd.append("productName", this.editProduct.name);
+      fd.append("outline", this.editProduct.description);
+      fd.append("owners", this.editProduct.contributor);
+      fd.append("tags", this.editProduct.tags);
+      fd.append("status", this.editProduct.status);
+      fd.append("currentPrice", this.editProduct.currentPrice);
+
+      let contributor = ''
+      for (let i = 0; i < this.editProduct.contributor.length; i++){
+        contributor += this.editProduct.contributor[i] + '_';
+      }
+      contributor = contributor.substring(0, contributor.length - 1);
+
+      let tags = ''
+      for (let i = 0; i < this.editProduct.tags.length; i++){
+        tags += this.editProduct.tags[i] + '_';
+      }
+      tags = tags.substring(0, tags.length - 1);
+
+      this.$axios({
+        method: 'put',
+        url: '/product/' + this.productId,
+        params: {
+          productName: this.editProduct.name,
+          outline: this.editProduct.description,
+          currentPrice: this.editProduct.currentPrice,
+          status: this.editProduct.status,
+          contributors: contributor,
+          tags: tags,
+        },
+      }).then(res => {
+        if (res.data['code'] == 200) {
+          this.$message('更新成功！');
+          this.productInfoVisible = false;
+          //重新获取信息
+        } else {
+          this.$message('更新失败!')
+        }
+      }).catch(function (error) {
+        console.log(error);
+      })
+    },
+
+    //cancel
+    cancel: function () {
+      this.productInfoVisible = false;
+    },
+
+    //切换标签页事件触发
     handleClick(tab, event) {
+      if (tab.name == 'first') {
+        this.getProductInformation();
+      }
       //this.tableData = []
       if (tab.name == 'docker') {
         this.$axios({
@@ -144,9 +223,11 @@ export default {
         });
       }
     },
+
     deleteRow(index, rows) {
       rows.splice(index, 1);
     },
+
     runtest(index, rows) {
       this.$axios({
         method: 'get',

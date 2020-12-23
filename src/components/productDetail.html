@@ -33,7 +33,7 @@
                 </el-table-column>
               </el-table>
               <br/>
-              <el-button type="success" size="mini" v-on:click="editProduct" v-if="role == 2 || role == 3">
+              <el-button type="success" size="mini" v-on:click="showEditPage" v-if="role == 2 || role == 3">
                 Edit Product Information
               </el-button>
             </el-col>
@@ -90,6 +90,7 @@
           <el-tab-pane label="Document" name="document"></el-tab-pane>
         </el-tabs>
 
+        <!--docker模块新增testcase-->
         <el-dialog title="Add new testcase" :visible.sync="dialogFormVisible">
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
             <el-form-item label="Case name" prop="name">
@@ -101,7 +102,57 @@
           </el-form>
           <el-button type="text" @click="submitForm('ruleForm')">Add into table</el-button>
         </el-dialog>
+        <!--更新产品信息-->
+        <el-dialog title="Product Information" :visible.sync="productInfoVisible" width="30%">
+          <el-form class="product" ref="form" :model="editProduct" size="mini">
+            <el-form-item label="">
+              <el-input v-model="editProduct.name" placeholder="Product Name">
+                <template slot="prepend">Product Name</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="">
+              <el-input v-model="editProduct.currentPrice" placeholder="Current Price">
+                <template slot="prepend">Current Price</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="">
+              <el-input v-model="editProduct.description" placeholder="Description">
+                <template slot="prepend">Description</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="Contributor:">
+              <el-checkbox-group v-model="editProduct.contributor">
+                <el-checkbox-button label="ZHAO" name="ZHAO"></el-checkbox-button>
+                <el-checkbox-button label="XU" name="XU"></el-checkbox-button>
+                <el-checkbox-button label="ZHU" name="ZHU"></el-checkbox-button>
+                <el-checkbox-button label="CHEN" name="CHEN"></el-checkbox-button>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="Tags:">
+              <el-checkbox-group v-model="editProduct.tags">
+                <el-checkbox-button label="Java" name="Java"></el-checkbox-button>
+                <el-checkbox-button label="Python" name="Python"></el-checkbox-button>
+                <el-checkbox-button label="AI" name="AI"></el-checkbox-button>
+                <el-checkbox-button label="Javascript" name="Javascript"></el-checkbox-button>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="status">
+              <el-select v-model="editProduct.status" placeholder="Please choose status">
+                <el-option label="developing" value="developing"></el-option>
+                <el-option label="alpha" value="alpha"></el-option>
+                <el-option label="beta" value="beta"></el-option>
+                <el-option label="final Version" value="finalVersion"></el-option>
+                <el-option label="deprecated" value="deprecated"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item size="large">
+              <el-button type="primary" @click="updateInfo">Save</el-button>
+              <el-button type="info" @click="cancel">Cancel</el-button>
+            </el-form-item>
+          </el-form>
+        </el-dialog>
       </div>
+
     </el-col>
   </el-row>
 </div>
