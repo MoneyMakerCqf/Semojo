@@ -38,7 +38,7 @@
         </el-input>
       </el-col>
 
-      <el-col :span="4" :offset="8" v-show=" this.$root.is_login" style="margin-top: 3px">
+      <el-col :span="4" :offset="8" v-show="this.$root.is_login" style="margin-top: 3px">
         <el-input
           placeholder="Search SEMojo"
           v-model="search">

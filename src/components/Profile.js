@@ -41,7 +41,7 @@ export default {
     return {
       tabPosition: 'left',
       //1-customer 2-contributor 3-administrator
-      role: 1,
+      role: localStorage.role,
       username: this.$route.params.name,
       activeName: '',
       activeTab: 'first',
@@ -50,7 +50,7 @@ export default {
       //个人信息
       origin: {
         name: '',
-        role: 1,
+        role: 0,
         address: '',
         email: '',
         gender: '',
@@ -196,7 +196,8 @@ export default {
         },
       }).then(res => {
         if (res.data['code'] == 200) {
-          this.$message('更新成功')
+          this.$message('更新成功');
+          this.getPermissions();
         } else {
           this.$message('更新失败')
         }
@@ -323,6 +324,26 @@ export default {
         }
       )
     },
+
+    //跳转到产品编辑界面
+    edit: function (index) {
+      this.$router.push('/product/' + this.productsContributed[index].productId)
+    },
+
+    //删除贡献的产品
+    deleteContributed: function (index) {
+      this.$axios.delete('/contributor/product/' + this.productsContributed[index].productId).then(res => {
+          console.log(res)
+          if (res.data['code'] == 200) {
+            this.$message('成功删除产品');
+            this.getContributedProducts();
+          } else {
+            this.$message('删除产品失败');
+          }
+        }
+      )
+    },
+
     clickDownload(index){
 
     }

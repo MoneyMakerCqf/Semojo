@@ -8,7 +8,7 @@ export default {
       activeTab: 'first',
       dialogFormVisible: false,
       testresult: 'Result is: This team pass CS307 OOAD successfully',
-      role: 3,
+      role: localStorage.role,
       product: {
         name: 'Products1',
         currentPrice: '3.2',

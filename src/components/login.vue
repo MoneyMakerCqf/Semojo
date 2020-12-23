@@ -108,6 +108,17 @@ export default {
               })
               this.$root.is_login = true;
               this.$root.username = this.ruleForm.username;
+
+              //获取role
+              let roleArray = [];
+              roleArray = res.data['role'].split(",");
+              if (roleArray[0] == "ROLE_CONTRIBUTOR"){
+                localStorage.role = 2;
+              } else if (roleArray[0] == "ROLE_CUSTOMER") {
+                localStorage.role = 1;
+              } else {
+                localStorage.role = 3;
+              }
               this.$router.push('/homepage')
             }else {
               this.$message({

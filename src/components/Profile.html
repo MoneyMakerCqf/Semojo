@@ -82,12 +82,8 @@
                 <div style="display: block;margin-left:5%;margin-top:2%;width: 60%" v-bind:class="permission.name">
                   <h1 style="font-size: 1rem;margin-left: 20%;vertical-align: middle;display: table-cell;">{{ permission.name }}</h1>
                 </div>
-                <div style="display: block;width:50%;margin-left:0%;margin-top: 6px;margin-bottom: 5px">
-                  <el-button type="primary" size="mini" @click="clickApprove($event)">Approve
-                  </el-button>
-                  <el-button type="plain" size='mini' @click="clickDisapprove($event)"
-                  >Disapprove
-                  </el-button>
+                <div style="display: block;width:40%;margin-left:15%;margin-top: 6px;margin-bottom: 5px">
+                  <el-button type="primary" size="mini" @click="clickApprove($event)">Approve</el-button>
                 </div>
               </li>
             </ul>
@@ -130,7 +126,7 @@
                   <a>
                     <el-button type="primary" size="mini" @click="edit(index)">Edit</el-button>
                   </a>
-                  <el-button type="plain" size='mini' @click="clickReview($event)"
+                  <el-button type="plain" size='mini' @click="deleteContributed(index)"
                   >Delete
                   </el-button>
                 </div>
