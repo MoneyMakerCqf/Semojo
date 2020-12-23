@@ -25,4 +25,10 @@
 .bg-purple {
   background: #d3dce6;
 }
+
+.title {
+  text-align: left;
+}
+
+
 </style>

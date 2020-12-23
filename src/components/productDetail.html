@@ -1,7 +1,9 @@
 <div class="productPage">
   <el-row>
-    <el-col :span="4" :offset="1">
+    <el-col :span="8" :offset="2">
+      <div class="title">
       <h3>{{productName}}</h3>
+      </div>
     </el-col>
   </el-row>
   <el-row>
@@ -10,36 +12,31 @@
         <el-tabs :tab-position="tabPosition" v-model="activeTab" style="height: 700px;" @tab-click="handleClick">
           <el-tab-pane label="Product Information" name="first">
             <el-col :span="8" :offset="8">
-            <h1 class="titleName">Product Information</h1>
-            <el-divider></el-divider>
-            <el-form class="productInformation" ref="form" :model="product" size="mini">
-              <el-form-item label="">
-                <el-input v-model="product.currentPrice" placeholder="CurrentPrice" :disabled="true">
-                  <template slot="prepend">Current Price</template>
-                </el-input>
-              </el-form-item>
-              <el-form-item label="">
-                <el-input v-model="product.price" placeholder="Price" :disabled="true">
-                  <template slot="prepend">Price</template>
-                </el-input>
-              </el-form-item>
-              <el-form-item label="">
-                <el-input v-model="product.contributor" placeholder="Contributors" :disabled="true">
-                  <template slot="prepend">Contributors</template>
-                </el-input>
-              </el-form-item>
-              <el-form-item label="">
-                <el-input v-model="product.tags" placeholder="Tags" :disabled="true">
-                  <template slot="prepend">Tags</template>
-                </el-input>
-              </el-form-item>
-              <el-form-item label="">
-                <el-input v-model="product.status" placeholder="Status" :disabled="true">
-                  <template slot="prepend">Status</template>
-                </el-input>
-              </el-form-item>
-            </el-form>
-              </el-col>
+<!--            <h1 class="titleName">Product Information</h1>-->
+<!--            <el-divider></el-divider>-->
+              <el-table
+                size="mini"
+                :data="tableInformation"
+                stripe
+                border
+                style="width: 100%">
+                <el-table-column
+                  prop="name"
+                  label="Name"
+                  align="right"
+                  width="130">
+                </el-table-column>
+                <el-table-column
+                  prop="value"
+                  label="Value"
+                  >
+                </el-table-column>
+              </el-table>
+              <br/>
+              <el-button type="success" size="mini" v-on:click="editProduct" v-if="role == 2 || role == 3">
+                Edit Product Information
+              </el-button>
+            </el-col>
           </el-tab-pane>
           <el-tab-pane label="Issues" name="issues"></el-tab-pane>
           <el-tab-pane label="Docker" name="docker" align="center">

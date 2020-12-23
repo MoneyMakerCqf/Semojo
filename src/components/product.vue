@@ -139,7 +139,7 @@ export default {
       }
     },
     linkDetail(DBid) {
-
+          this.$router.push('/product/' + DBid)
     },
     purchase(DBid){
 
