@@ -33,6 +33,7 @@ new Vue({
   mounted() {
     if(localStorage.getItem('Authorization')){
       this.is_login = true;
+      this.username = localStorage.username
     }
   },
   components: { App },

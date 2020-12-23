@@ -14,7 +14,6 @@ interceptor.interceptors.request.use(
         config.headers.authorization = localStorage.getItem('Authorization');
       }
     }
-    console.log(config);
     if(config.url.includes('/test')){
       startLoading();
     }
@@ -25,7 +24,6 @@ interceptor.interceptors.request.use(
   });
 
 interceptor.interceptors.response.use((response) => {
-  console.log('response', response)
   let {status} = response
   if (status == 200) {
     endLoading()

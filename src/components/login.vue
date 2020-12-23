@@ -97,9 +97,7 @@ export default {
             }
           }).then(res => {  //res是返回结果
             if (res.data['code']=="200"){
-              console.log(res.data);
               _this.userToken='Bearer '+res.data['token'];
-              console.log(this.userToken);//获取到的token
 
               _this.changeLogin({Authorization: _this.userToken});
               this.$message({
@@ -108,7 +106,7 @@ export default {
               })
               this.$root.is_login = true;
               this.$root.username = this.ruleForm.username;
-
+              localStorage.username = this.ruleForm.username;
               //获取role
               let roleArray = [];
               roleArray = res.data['role'].split(",");

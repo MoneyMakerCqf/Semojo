@@ -1,5 +1,6 @@
 <template>
   <div align="center">
+<!--    根据language和tags筛选项目-->
     <div style="margin-left:200px;" align="left">
       <h1>ALL PRODUCTS</h1>
       <el-radio-group v-model="language" style="margin-top: 15px" size="medium" @change="handleLanguageChange">
@@ -19,8 +20,9 @@
         <el-radio-button label="AI"></el-radio-button>
         <el-radio-button label="ARM"></el-radio-button>
       </el-radio-group>
+      <br>
     </div>
-    <br>
+<!--    展示项目的表格-->
     <template>
       <br>
       <div class="infinite-list-wrapper" style="overflow:auto;width:80%;" align="center">
@@ -97,8 +99,9 @@
           </el-table>
         </div>
       </div>
+      <br>
     </template>
-    <br>
+<!--   分页-->
     <div style="margin-left:50px;">
       <el-pagination
         :background="true"
@@ -109,6 +112,15 @@
         @current-change="handleCurrentChange">
       </el-pagination>
     </div>
+<!--    购买弹窗-->
+    <el-dialog title="Pay for it" :visible.sync="dialogFormVisible">
+      <el-card :body-style="{ padding: '0px' }">
+        <img src="../assets/payment.jpg" class="image" >
+      </el-card>
+      <el-button @click="paysuccess" type="primary">
+        Already paid~
+      </el-button>
+    </el-dialog>
   </div>
 </template>
 
@@ -126,6 +138,8 @@ export default {
       show_list:[],
       conditional_list:[],
       list: [],
+      dialogFormVisible: false,
+      tractionid: '',
     };
   },
   methods: {
@@ -182,7 +196,43 @@ export default {
        this.$router.push('/product/' + DBid)
     },
     purchase(index,rows){
-      // 购买show_list[index].DBid
+      this.$axios({
+        method: 'post',
+        url: '/customer/'+localStorage.username+'/product/'+this.show_list[index].DBid+'/transaction',
+        data: {
+          products: this.show_list[index].DBid
+        },
+      }).then(res =>{
+        if (res.data['code']==200){
+          this.dialogFormVisible=true
+          this.tractionid=res.data['data'].id
+        }else {
+        }
+      }).catch(error =>{
+        console.log(error)
+      })
+    },
+    paysuccess(){
+      this.$axios({
+        method: 'put',
+        url: '/customer/'+localStorage.username+'/transaction/'+this.tractionid,
+        params: {
+          status: 'PurchasedSuccess'
+        }
+      }).then(res =>{
+        if(res.data['code']==200){
+          this.dialogFormVisible=false
+          this.$message({
+            message:'purchase success',
+            type:'success'
+          })
+        }else {
+          this.$message({
+            message:'purchase unsuccess',
+            type:'warning'
+          })
+        }
+      })
     }
   },
   mounted() {
@@ -232,3 +282,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .image {
+  height: 400px;
+  width: 250px;
+  display: block;
+  }
+</style>
