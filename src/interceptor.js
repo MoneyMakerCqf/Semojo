@@ -14,7 +14,7 @@ interceptor.interceptors.request.use(
         config.headers.authorization = localStorage.getItem('Authorization');
       }
     }
-    if(config.url.includes('/test')){
+    if(config.url.includes('/test/')){
       startLoading();
     }
     return config;

@@ -42,7 +42,7 @@
         <el-input
           placeholder="Search SEMojo"
           v-model="search">
-          <el-button slot="append" icon="el-icon-search" @click="searchfor('search')"></el-button>
+          <el-button slot="append" icon="el-icon-search" @click="searchfor(search)"></el-button>
         </el-input>
       </el-col>
 
@@ -110,7 +110,7 @@ export default {
       this.$router.push('/register');
     },
     searchfor(searchitem){
-      this.$router.push('/search');
+      this.$router.push('/search/'+searchitem);
     }
   }
 }

@@ -42,7 +42,7 @@ export default new Router({
     },
     //搜索界面
     {
-      path: '/search',
+      path: '/search/:searchitem',
       name: 'search',
       component: search,
     },

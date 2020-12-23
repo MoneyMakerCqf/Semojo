@@ -40,6 +40,15 @@
           </el-tab-pane>
           <el-tab-pane label="Issues" name="issues"></el-tab-pane>
           <el-tab-pane label="Docker" name="docker" align="center">
+            <div align="left" style="width: 80%">
+              <h3>Choose an artifact</h3>
+              <div v-for="arti in artifacts" >
+                <el-radio v-model="radio" label="arti.id">{{arti.name}}</el-radio>
+              </div>
+              <br>
+              <h3>Choose testcase to run</h3>
+            </div>
+
             <div style="width: 80%">
               <el-table
                 :data="tableData"
@@ -80,16 +89,17 @@
               </el-table>
               <br>
               <el-button type="text" @click="addtestcase()" >Add testcase</el-button>
-              <br><br><br>
-              <el-card class="box-card" align="left">
-                <h3>Test result</h3>
-                {{testresult}}
-              </el-card>
             </div>
           </el-tab-pane>
           <el-tab-pane label="Document" name="document"></el-tab-pane>
         </el-tabs>
 
+        <el-dialog title="Add new testcase" :visible.sync="dialogResultVisible">
+          <el-card class="box-card" align="left">
+            <h3>Test result</h3>
+            {{testresult}}
+          </el-card>
+        </el-dialog>
         <!--docker模块新增testcase-->
         <el-dialog title="Add new testcase" :visible.sync="dialogFormVisible">
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">

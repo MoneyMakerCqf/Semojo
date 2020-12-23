@@ -32,8 +32,7 @@
                     <el-link
                       target="_blank"
                       style="color:#000;text-decoration:none;"
-                      class=navigation_fontsize
-                      v-bind:href="item.href">
+                      class=navigation_fontsize>
                       {{item.name}}
                     </el-link>
                     <el-rate
@@ -74,8 +73,7 @@
                     <el-link
                       target="_blank"
                       style="color:#000;text-decoration:none;"
-                      class=navigation_fontsize
-                      v-bind:href="item.href">
+                      class=navigation_fontsize>
                       {{item.name}}
                     </el-link>
                     <div> Code: {{item.code}}</div>
@@ -106,8 +104,7 @@
                     <el-link
                       target="_blank"
                       style="color:#000;text-decoration:none;"
-                      class=navigation_fontsize
-                      v-bind:href="item.href">
+                      class=navigation_fontsize>
                       {{item.name}}
                     </el-link>
                     <div> Issue: {{item.issue}}</div>
@@ -138,8 +135,7 @@
                     <el-link
                       target="_blank"
                       style="color:#000;text-decoration:none;"
-                      class=navigation_fontsize
-                      v-bind:href="item.href">
+                      class=navigation_fontsize>
                       {{item.name}}
                     </el-link>
                     <div> Address: {{item.address}}</div>
@@ -166,7 +162,7 @@ export default {
       total: 0,
       value: 'score',
       activeTab: "Products",
-
+      searchitem: this.$route.params.searchitem,
 
       show_list: [],
       list: [{id:1, name:"cqfwuwuwu", star:4.5, price:"50", contributors:"cqf,zf", tags:"Java", description:"this is my final ripple, JOJO", DBid:5,update_time:2020/11/24,score:82},
@@ -215,16 +211,19 @@ export default {
 
     },
     handleTabClick(tab,event){
+      this.id = 0;
+      this.total = 0;
+      this.show_list = [];
+      this.list = [];
       if(tab.name=="Products"){
         this.$axios({
           method: 'get',
-          url: '/products',
+          url: 'search/product',
           params: {
-            type: 'Products',
-            search: window.localStorage.getItem("search"),
+            keyword: this.$route.params.searchitem,
           },
         }).then(res => {  //res是返回结果
-          if (res.data['code']==20200){
+          if (res.data['code']==200){
             let datalist = [];
             datalist = res.data['data'];
             for (let i = 0, length = datalist.length; i < length; i++) {
@@ -240,7 +239,6 @@ export default {
                 DBid: datalist[i].productId,
                 update_time: datalist[i].update_time,
                 score: datalist[i].score,
-                href: datalist[i].href,
               };
               this.list.push(product);
             }
@@ -261,8 +259,6 @@ export default {
       }
     },
     changeToCode() {
-      this.show_list = [];
-      this.list = [];
       this.$axios({
         method: 'get',
         url: '/codes',
@@ -271,7 +267,7 @@ export default {
           search: window.localStorage.getItem("search"),
         },
       }).then(res => {  //res是返回结果
-        if (res.data['code']==20200){
+        if (res.data['code']==200){
           let datalist = [];
           datalist = res.data['data'];
           for (let i = 0, length = datalist.length; i < length; i++) {
@@ -279,7 +275,6 @@ export default {
               id : i+1,
               name: datalist[i].ProjectName,
               code: datalist[i].code,
-              href: datalist[i].href,
             };
             this.list.push(product);
           }
@@ -292,8 +287,6 @@ export default {
       })
     },
     changeToIssue() {
-      this.show_list = [];
-      this.list = [];
       this.$axios({
         method: 'get',
         url: '/issues',
@@ -302,7 +295,7 @@ export default {
           search: window.localStorage.getItem("search"),
         },
       }).then(res => {  //res是返回结果
-        if (res.data['code']==20200){
+        if (res.data['code']==200){
           let datalist = [];
           datalist = res.data['data'];
           for (let i = 0, length = datalist.length; i < length; i++) {
@@ -310,7 +303,6 @@ export default {
               id : i+1,
               name: datalist[i].userName,
               issue: datalist[i].issue,
-              href: datalist[i].href,
             };
             this.list.push(product);
           }
@@ -323,28 +315,23 @@ export default {
       })
     },
     changeToUser() {
-      this.show_list = [];
-      this.list = [];
       this.$axios({
         method: 'get',
-        url: '/users',
+        url: '/search/user',
         params: {
-          type: 'Users',
-          search: window.localStorage.getItem("search"),
+          username: this.$route.params.searchitem,
         },
       }).then(res => {  //res是返回结果
-        if (res.data['code']==20200){
+        if (res.data['code']==200){
           let datalist = [];
           datalist = res.data['data'];
           for (let i = 0, length = datalist.length; i < length; i++) {
-            let product = {
-              id : i+1,
-              name: datalist[i].userName,
+            let user = {
+              name: datalist[i].username,
               address: datalist[i].address,
               email: datalist[i].email,
-              href: datalist[i].href,
             };
-            this.list.push(product);
+            this.list.push(user);
           }
           this.total = this.list.length;
           for (let i=this.id; i<5 && i<this.total; i++){
@@ -356,17 +343,15 @@ export default {
     },
   },
   mounted() {
-    this.total=10;
     this.img_src = window.localStorage.getItem('img_src')
     this.$axios({
       method: 'get',
-      url: '/products',
+      url: 'search/product',
       params: {
-        type: 'Products',
-        search: window.localStorage.getItem("search"),
+        keyword: this.$route.params.searchitem,
       },
     }).then(res => {  //res是返回结果
-      if (res.data['code']==20200){
+      if (res.data['code']==200){
         let datalist = [];
         datalist = res.data['data'];
         for (let i = 0, length = datalist.length; i < length; i++) {
@@ -382,7 +367,6 @@ export default {
             DBid: datalist[i].productId,
             update_time: datalist[i].update_time,
             score: datalist[i].score,
-            href: datalist[i].href,
           };
           this.list.push(product);
         }

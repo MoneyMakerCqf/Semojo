@@ -3,10 +3,12 @@ export default {
   data() {
     return {
       productName: 'Night City',
+      radio: '',
       productId: this.$route.params.id,
       tabPosition: 'top',
       activeTab: 'first',
       dialogFormVisible: false,
+      dialogResultVisible: false,
       productInfoVisible: false,
       testresult: 'Result is: This team pass CS307 OOAD successfully',
       role: localStorage.role,
@@ -23,10 +25,7 @@ export default {
         description: 'This is about AI',
         rating: 4.6,
       },
-      tableData: [{
-        testcase: 'testcase_01',
-        describe: 'This is the first testcase of the product, test its performance'
-      }],
+      tableData: [],
       ruleForm: {
         name: '',
         describe: '',
@@ -89,6 +88,7 @@ export default {
         status: '',
         description: '',
       },
+      artifacts: [],
     }
   },
   methods: {
@@ -224,6 +224,48 @@ export default {
       }
     },
 
+    //获取artifact信息
+    getArtifactInformation() {
+      this.$axios({
+        method: 'get',
+        url: '/product/' + this.productId + '/artifacts',
+      }).then(res=>{
+        if (res.data['code']==200){
+          let datalist = [];
+          datalist = res.data['data'];
+          for (let i = 0, length = datalist.length; i < length; i++) {
+            let artifact = {
+              name: datalist[i].fileName,
+              id: datalist[i].id,
+            }
+            this.artifacts.push(artifact);
+          }
+          if(this.artifacts.length!=0) {
+            this.radio = this.artifacts[0].id
+          }
+        }
+      })
+    },
+    //获取testcase信息
+    getTestcaseInformation() {
+      this.$axios({
+        method: 'get',
+        url: '/product/' + this.productId + '/testcases',
+      }).then(res=>{
+        if (res.data['code']==200){
+          let datalist = [];
+          datalist = res.data['data'];
+          for (let i = 0, length = datalist.length; i < length; i++) {
+            let testcase = {
+              testcase: datalist[i].fileName,
+              describe: datalist[i].outPutDescription,
+              id: datalist[i].id,
+            }
+            this.tableData.push(testcase);
+          }
+        }
+      })
+    },
     deleteRow(index, rows) {
       rows.splice(index, 1);
     },
@@ -231,10 +273,11 @@ export default {
     runtest(index, rows) {
       this.$axios({
         method: 'get',
-        url: '/test/' + index,
+        url: '/product/'+this.productId+'/artifacts/'+ this.radio+'/'+this.tableData[index].id,
       }).then(res => {  //res是返回结果
         if (res.data['code'] == "200") {
-          this.testresult = res.data['testcode']
+          this.testresult = res.data['testcode'];
+          this.dialogResultVisible = true;
         } else {
           this.$message({
             message: 'connect wrong',
@@ -246,6 +289,7 @@ export default {
     addtestcase() {
       this.dialogFormVisible = true
     },
+
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -266,6 +310,8 @@ export default {
 
   mounted() {
     this.getProductInformation();
+    this.getArtifactInformation();
+    this.getTestcaseInformation();
   }
 
 }
