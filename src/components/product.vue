@@ -20,39 +20,82 @@
         <el-radio-button label="ARM"></el-radio-button>
       </el-radio-group>
     </div>
+    <br>
     <template>
       <br>
       <div class="infinite-list-wrapper" style="overflow:auto;width:80%;" align="center">
-        <ul	class="list"
-             style="list-style:none;">
-          <li v-for="item in show_list" class="list-item">
-            <div align="left" style="margin-left: 25px; display: flex">
-              <div style="width: 80%">
-                <i class="el-icon-notebook-2"></i>
-                <el-link
-                  target="_blank"
-                  style="color:#000000;text-decoration:none;"
-                  class=navigation_fontsize
-                  @click="linkDetail(item.DBid)">
-                  {{item.name}}
-                </el-link>
-                <el-progress style="width: 40%" :percentage="item.satisfaction">satisfaction</el-progress>
-                <div> Price: {{item.price}}</div>
-                <div> Contributors: {{item.contributors}}</div>
-                <div> Language: {{item.language}}</div>
-                <div style="display: inline"> Tags:
-                  <div v-for="tag in item.tags" style="display: inline-flex">
-                    <p> {{tag}} </p>
-                  </div>
-                </div>
-                <div> description: {{item.description}}</div>
-              </div>
-              <div style="width: 15%;" align="right">
-                <el-button type="primary" style="margin-top: 30%" @click="purchase(item.DBid)">purchase</el-button>
-              </div>
-            </div>
-          </li>
-        </ul>
+        <div style="width: 95%">
+          <el-table
+            v-loading="loading"
+            :data="show_list">
+            <el-table-column
+              label="Name"
+              width="150">
+              <template slot-scope="scope">
+                <i class="el-icon-folder"></i>
+                <el-button
+                  size="small"
+                  type="text"
+                  style="font-size:16px"
+                  @click="linkDetail(scope.row.DBid)">
+                  {{scope.row.name}}
+                </el-button>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="Satisfaction"
+              width="150">
+              <template slot-scope="scope">
+                <el-rate
+                  v-model="scope.row.satisfaction"
+                  disabled
+                  show-score
+                  text-color="#ff9900"
+                  score-template="{value}">
+                </el-rate>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="price"
+              label="Price($)"
+              width="90">
+            </el-table-column>
+            <el-table-column
+              prop="contributors"
+              label="Contributors"
+              width="150">
+            </el-table-column>
+            <el-table-column
+              prop="language"
+              label="Language"
+              width="150">
+            </el-table-column>
+            <el-table-column
+              prop="tags"
+              label="Tags"
+              width="100">
+            </el-table-column>
+            <el-table-column
+              prop="description"
+              label="Description"
+              width="200">
+            </el-table-column>
+            <el-table-column
+              fixed="right"
+              label="operation"
+              width="150">
+              <template slot-scope="scope">
+                <el-button
+                  @click="purchase(scope.$index, show_list)"
+                  size="small"
+                  type="primary"
+                  style="font-size:16px">
+                  purchase
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </div>
     </template>
     <br>
@@ -76,7 +119,7 @@ export default {
     return {
       language: 'All Languages',
       type: 'All Types',
-      loading: false,
+      loading: true,
       id: 1,
       total: 0,
       current_page: 1,
@@ -86,9 +129,6 @@ export default {
     };
   },
   methods: {
-    searchfor(search) {
-
-    },
     handleCurrentChange(val) {
       this.current_page = val;
       this.show_list.splice(0,this.show_list.length);
@@ -139,10 +179,10 @@ export default {
       }
     },
     linkDetail(DBid) {
-          this.$router.push('/product/' + DBid)
+       this.$router.push('/product/' + DBid)
     },
-    purchase(DBid){
-
+    purchase(index,rows){
+      // 购买show_list[index].DBid
     }
   },
   mounted() {
@@ -179,6 +219,7 @@ export default {
           for (let i = 0; i < 8 && i < this.total; i++) {
             this.show_list.push(this.conditional_list[i]);
           }
+          this.loading=false
         }
       })
     } else {
@@ -191,13 +232,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.list .list-item {
-  height: 140px;
-  line-height: 20px;
-  background: #e8f3fe;
-  margin: 10px;
-  color: #000000;
-}
-</style>
