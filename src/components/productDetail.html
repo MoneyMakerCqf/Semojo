@@ -41,49 +41,66 @@
           <el-tab-pane label="Issues" name="issues"></el-tab-pane>
           <el-tab-pane label="Docker" name="docker" align="center">
             <div style="width: 80%">
-            <el-table
-              :data="tableData"
-              max-height="300">
-              <el-table-column
-                fixed
-                prop="testcase"
-                label="Testcase"
-                width="200">
-              </el-table-column>
-              <el-table-column
-                prop="describe"
-                label="Describe"
-                width="500">
-              </el-table-column>
+              <el-table
+                :data="tableData"
+                max-height="300">
+                <el-table-column
+                  fixed
+                  prop="testcase"
+                  label="Testcase"
+                  width="200">
+                </el-table-column>
+                <el-table-column
+                  prop="describe"
+                  label="Describe"
+                  width="500">
+                </el-table-column>
 
-              <el-table-column
-                fixed="right"
-                label="operation"
-                width="200">
-                <template slot-scope="scope">
-                  <el-button
-                    @click="runtest(scope.$index, tableData)"
-                    size="small"
-                    type="primary"
-                    style="font-size:16px">
-                    run
-                  </el-button>
-                  <el-button
-                    @click.native.prevent="deleteRow(scope.$index, tableData)"
-                    type="text"
-                    size="small"
-                    style="font-size:16px">
-                    delete
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
+                <el-table-column
+                  fixed="right"
+                  label="operation"
+                  width="200">
+                  <template slot-scope="scope">
+                    <el-button
+                      @click="runtest(scope.$index, tableData)"
+                      size="small"
+                      type="primary"
+                      style="font-size:16px">
+                      run
+                    </el-button>
+                    <el-button
+                      @click.native.prevent="deleteRow(scope.$index, tableData)"
+                      type="text"
+                      size="small"
+                      style="font-size:16px">
+                      delete
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
               <br>
-              <el-button type="text" @click="addtestcase()">Add testcase</el-button>
+              <el-button type="text" @click="addtestcase()" >Add testcase</el-button>
+              <br><br><br>
+              <el-card class="box-card" align="left">
+                <h3>Test result</h3>
+                {{testresult}}
+              </el-card>
             </div>
           </el-tab-pane>
           <el-tab-pane label="Document" name="document"></el-tab-pane>
         </el-tabs>
+
+        <el-dialog title="Add new testcase" :visible.sync="dialogFormVisible">
+          <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+            <el-form-item label="Case name" prop="name">
+              <el-input v-model="ruleForm.name"></el-input>
+            </el-form-item>
+            <el-form-item label="Description" prop="describe">
+              <el-input v-model="ruleForm.describe"></el-input>
+            </el-form-item>
+          </el-form>
+          <el-button type="text" @click="submitForm('ruleForm')">Add into table</el-button>
+        </el-dialog>
       </div>
     </el-col>
   </el-row>
