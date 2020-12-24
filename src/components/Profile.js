@@ -251,6 +251,7 @@ export default {
       }).then(res =>{
         if (res.data['code']==200){
           let datalist = res.data['data'];
+          this.tractionCreated = [];
           for (let i = 0, length = datalist.length; i < length; i++) {
             let traction = {
               id: datalist[i].id,
