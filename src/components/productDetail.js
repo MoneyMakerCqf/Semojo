@@ -40,6 +40,7 @@ export default {
         context: '',
       },
       createSubIssue: {
+        issueId: '',
         answerToWho: '',
         context: '',
       },
@@ -133,6 +134,7 @@ export default {
         file: '',
       },
       artifacts: [],
+      subIssueTable: [],
     }
   },
   methods: {
@@ -280,6 +282,32 @@ export default {
       });
     },
 
+    //获取SubIssue
+    getSubIssues: function () {
+      this.$axios({
+        method: 'get',
+        url: '/product/' + this.productId + '/issue/' + this.createSubIssue.issueId + '/sub_issues',
+      }).then(res => {  //res是返回结果
+        console.log(res);
+        if (res.data['code'] == "200") {
+          this.subIssueTable = [];
+          let datalist = res.data['data'];
+          for (let i = 0, length = datalist.length; i < length; i++) {
+            let subIssue = {
+              answerToWho: datalist[i].answerToWho,
+              context: datalist[i].context,
+            }
+            this.subIssueTable.push(subIssue);
+          }
+        } else {
+          this.$message({
+            message: 'connect wrong',
+            type: 'warning'
+          })
+        }
+      });
+    },
+
     //创建Issue
     updateIssue: function () {
       let fd = new FormData();
@@ -295,6 +323,26 @@ export default {
             this.getIssues();
           } else {
             this.$message('构建Issue失败');
+          }
+        }
+      )
+
+    },
+
+    //创建SubIssue
+    updateSubIssue: function () {
+      let fd = new FormData();
+      fd.append("answerToWho", this.createSubIssue.answerToWho);
+      fd.append("context", this.createSubIssue.context);
+
+      this.$axios.post('/customer/' + this.username + '/product/' + this.productId + '/issue/' + this.createSubIssue.issueId + '/sub_issue', fd).then(res => {
+          console.log(res)
+          if (res.data['code'] == 200) {
+            this.$message('成功新建SubIssue');
+            this.SubIssueInfoVisible = false;
+            this.getSubIssues();
+          } else {
+            this.$message('构建SubIssue失败');
           }
         }
       )
@@ -346,7 +394,7 @@ export default {
       }).then(res => {  //res是返回结果
         if (res.data['code'] == 200) {
           console.log(res);
-          this.codes = [];
+          this.artifacts = [];
           var data = res.data['data'];
           for (let i = 0; i < data.length; i++) {
             let artifact = {
@@ -366,7 +414,6 @@ export default {
     },
 
     //获取testcases文件列表
-    //获取Artifacts文件
     getTestcases: function () {
       this.$axios({
         method: 'get',
@@ -476,12 +523,12 @@ export default {
       event.preventDefault();
       let formData = new FormData();
       formData.append('username', this.username);
-      formData.append('projectId', this.productId);
+      formData.append('productId', this.productId);
       formData.append('description', this.testcaseForm.description);
       formData.append('input', this.testcaseForm.input);
       formData.append('output', this.testcaseForm.output);
       formData.append('inputDescription', this.testcaseForm.inputDescription);
-      formData.append('outPutDescription', this.testcaseForm.outputDescription);
+      formData.append('outputDescription', this.testcaseForm.outputDescription);
       formData.append('status', this.testcaseForm.status);
       formData.append('uploadFile', this.testcaseForm.file);
 
@@ -563,6 +610,8 @@ export default {
 
     //手风琴面板事件触发
     handleChange: function (val) {
+      this.createSubIssue.issueId = val;
+      this.getSubIssues();
       console.log(val);
     },
 

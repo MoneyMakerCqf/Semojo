@@ -41,17 +41,33 @@
           <el-tab-pane label="Issues" name="issues">
             <el-col :span="16" :offset="4">
             <el-collapse v-model="activeName" accordion @change="handleChange">
-              <el-collapse-item v-for="(issue, index) in issues" v-bind:title="issue.title" v-bind:key="index + 1" v-bind:name="index + 1" >
+              <el-collapse-item v-for="(issue, index) in issues" v-bind:title="issue.title" v-bind:key="index + 1" v-bind:name="issue.issueId" >
                   <div>
                     <h4>Outline</h4>
-                    <el-divider></el-divider>
                     <p>{{issue.outline}}</p>
-                    <h4>Context</h4>
                     <el-divider></el-divider>
+                    <h4>Context</h4>
                     <p>{{issue.context}}</p>
+                    <el-divider></el-divider>
                     <h4>SubIssues</h4>
                     <el-divider></el-divider>
-                    <el-button type="success" size="mini" v-on:click="showSubIssuePage">
+
+                    <el-table
+                      :data="subIssueTable"
+                      stripe
+                      style="width: 100%">
+                      <el-table-column
+                        prop="answerToWho"
+                        label="AnswerToWho"
+                        width="150">
+                      </el-table-column>
+                      <el-table-column
+                        prop="context"
+                        label="Context">
+                      </el-table-column>
+                    </el-table>
+
+                    <el-button type="primary" size="mini" v-on:click="showSubIssuePage">
                       Add SubIssue
                     </el-button>
                   </div>
