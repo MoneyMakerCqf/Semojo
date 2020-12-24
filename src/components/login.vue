@@ -107,6 +107,7 @@ export default {
               this.$root.is_login = true;
               this.$root.username = this.ruleForm.username;
               localStorage.username = this.ruleForm.username;
+
               //获取role
               let roleArray = [];
               roleArray = res.data['role'].split(",");

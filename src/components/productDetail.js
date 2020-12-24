@@ -2,6 +2,7 @@ export default {
   name: 'productDetail',
   data() {
     return {
+      username: localStorage.username,
       productName: 'Night City',
       radio: '',
       productId: this.$route.params.id,
@@ -10,8 +11,14 @@ export default {
       dialogFormVisible: false,
       dialogResultVisible: false,
       productInfoVisible: false,
+      IssueInfoVisible: false,
+      SubIssueInfoVisible: false,
+      dialogCodeVisible: false,
+      dialogArtifactVisible: false,
+      dialogTestcaseVisible: false,
       testresult: 'Result is: This team pass CS307 OOAD successfully',
       role: localStorage.role,
+      activeName: '1',
       product: {
         name: 'Products1',
         currentPrice: '3.2',
@@ -24,6 +31,17 @@ export default {
         recentUpdateDate: '2020/11/24',
         description: 'This is about AI',
         rating: 4.6,
+      },
+      issues: [],
+      subIssues: [],
+      createIssue: {
+        title: '',
+        outline: '',
+        context: '',
+      },
+      createSubIssue: {
+        answerToWho: '',
+        context: '',
       },
       tableData: [],
       ruleForm: {
@@ -88,6 +106,32 @@ export default {
         status: '',
         description: '',
       },
+      codes: [],
+      testcases: [],
+      codeForm: {
+        productId: '',
+        description: '',
+        lang: '',
+        file: '',
+      },
+      artifactForm: {
+        productId: '',
+        description: '',
+        version: '',
+        status: '',
+        lang: '',
+        file: '',
+      },
+      testcaseForm: {
+        productId:'',
+        description: '',
+        input: '',
+        output: '',
+        inputDescription: '',
+        outputDescription: '',
+        status: '',
+        file: '',
+      },
       artifacts: [],
     }
   },
@@ -140,6 +184,27 @@ export default {
       this.editProduct.contributor = this.product.contributor;
     },
 
+    //展示Issue创建dialog
+    showIssuePage: function () {
+      this.IssueInfoVisible = true;
+    },
+
+    showSubIssuePage: function () {
+      this.SubIssueInfoVisible = true;
+    },
+
+    showUploadPage: function () {
+        this.dialogCodeVisible = true;
+    },
+
+    showArtifactPage: function () {
+       this.dialogArtifactVisible = true;
+    },
+
+    showTestcasePage: function () {
+      this.dialogTestcaseVisible = true;
+    },
+
     //更改产品信息
     updateInfo: function () {
       //发送修改后的信息
@@ -187,15 +252,336 @@ export default {
       })
     },
 
+    //获取Issue
+    getIssues: function () {
+      this.$axios({
+        method: 'get',
+        url: '/product/' + this.productId + '/issues',
+      }).then(res => {  //res是返回结果
+        console.log(res);
+        if (res.data['code'] == "200") {
+          this.issues = [];
+          let datalist = res.data['data'];
+          for (let i = 0, length = datalist.length; i < length; i++) {
+            let issue = {
+              issueId: datalist[i].issueId,
+              title: datalist[i].title,
+              outline: datalist[i].outline,
+              context: datalist[i].context,
+            }
+            this.issues.push(issue);
+          }
+        } else {
+          this.$message({
+            message: 'connect wrong',
+            type: 'warning'
+          })
+        }
+      });
+    },
+
+    //创建Issue
+    updateIssue: function () {
+      let fd = new FormData();
+      fd.append("title", this.createIssue.title);
+      fd.append("outline", this.createIssue.outline);
+      fd.append("context", this.createIssue.context);
+
+      this.$axios.post('/customer/' + this.username + '/product/' + this.productId + '/issue', fd).then(res => {
+          console.log(res)
+          if (res.data['code'] == 200) {
+            this.$message('成功新建Issue');
+            this.IssueInfoVisible = false;
+            this.getIssues();
+          } else {
+            this.$message('构建Issue失败');
+          }
+        }
+      )
+
+    },
+
     //cancel
     cancel: function () {
       this.productInfoVisible = false;
+      this.IssueInfoVisible = false;
+      this.SubIssueInfoVisible = false;
+      this.dialogCodeVisible = false;
+      this.dialogArtifactVisible = false;
+      this.dialogTestcaseVisible = false;
+    },
+
+    //获取已上传的code文件
+    getCodes: function () {
+      this.$axios({
+        method: 'get',
+        url: '/product/' + this.productId + '/codes',
+      }).then(res => {  //res是返回结果
+        if (res.data['code'] == 200) {
+          console.log(res);
+          this.codes = [];
+          var data = res.data['data'];
+          for (let i = 0; i < data.length; i++) {
+            let code = {
+              id : data[i].id,
+              uploader : data[i].uploader,
+              description : data[i].description,
+              uploadTime : data[i].uploadTime,
+              updateTime : data[i].updateTime,
+              location : data[i].location,
+              fileName : data[i].fileName,
+              lang: data[i].lang
+            }
+            this.codes.push(code);
+          }
+        }
+      })
+    },
+
+    //获取Artifacts文件
+    getArtifacts: function () {
+      this.$axios({
+        method: 'get',
+        url: '/product/' + this.productId + '/artifacts',
+      }).then(res => {  //res是返回结果
+        if (res.data['code'] == 200) {
+          console.log(res);
+          this.codes = [];
+          var data = res.data['data'];
+          for (let i = 0; i < data.length; i++) {
+            let artifact = {
+              id : data[i].id,
+              uploader : data[i].uploader,
+              description : data[i].description,
+              uploadTime : data[i].upload_time,
+              updateTime : data[i].update_time,
+              location : data[i].location,
+              fileName : data[i].fileName,
+              lang: data[i].lang
+            }
+            this.artifacts.push(artifact);
+          }
+        }
+      })
+    },
+
+    //获取testcases文件列表
+    //获取Artifacts文件
+    getTestcases: function () {
+      this.$axios({
+        method: 'get',
+        url: '/product/' + this.productId + '/testcases',
+      }).then(res => {  //res是返回结果
+        if (res.data['code'] == 200) {
+          console.log(res);
+          this.testcases = [];
+          var data = res.data['data'];
+          for (let i = 0; i < data.length; i++) {
+            let testcase = {
+              id : data[i].id,
+              uploader : data[i].uploader,
+              description : data[i].description,
+              uploadTime : data[i].uploadTime,
+              updateTime : data[i].updateTime,
+              location : data[i].location,
+              fileName : data[i].fileName,
+              testStatus: data[i].testStatus,
+            }
+            this.testcases.push(testcase);
+          }
+        }
+      })
+    },
+
+
+    //获取文件
+    getFile(event) {
+      this.codeForm.file = event.target.files[0];
+      console.log(this.codeForm.file);
+    },
+
+    //获取artifact文件
+    getArtifact(event) {
+      this.artifactForm.file = event.target.files[0];
+      console.log(this.artifactForm.file);
+    },
+
+    //获取testcase文件
+    getTestcase(event) {
+      this.testcaseForm.file = event.target.files[0];
+      console.log(this.testcaseForm.file);
+    },
+
+    //提交code文件和相关信息
+    submitCodeForm(event) {
+      event.preventDefault();
+      let formData = new FormData();
+      formData.append('username', this.username);
+      formData.append('productId', this.productId);
+      formData.append('description', this.codeForm.description);
+      formData.append('lang', this.codeForm.lang);
+      formData.append('sourceCode', this.codeForm.file);
+
+      let config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+      ///contributor/{username}/product/{productId}/code
+      this.$axios.post('/contributor/' + this.username + '/product/' + this.productId + '/code', formData, config).then(res => {
+        if (res.status == 200) {
+          console.log(res)
+          this.$message("上传成功");
+          this.getCodes();
+        } else{
+          this.$message("上传失败")
+        }
+      }).catch(function (error) { // 请求失败处理
+        console.log(error);
+      });
+    },
+
+    //提交artifact文件和相关信息
+    submitArtifactForm(event) {
+      event.preventDefault();
+      let formData = new FormData();
+      formData.append('username', this.username);
+      formData.append('productId', this.productId);
+      formData.append('description', this.artifactForm.description);
+      formData.append('version', this.artifactForm.version);
+      formData.append('status', this.artifactForm.status);
+      formData.append('lang', this.artifactForm.lang);
+      formData.append('artifact', this.artifactForm.file);
+
+      let config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+      this.$axios.post('/contributor/' + this.username + '/product/' + this.productId + '/artifact', formData, config).then(res => {
+        if (res.status == 200) {
+          console.log(res)
+          this.$message("上传成功");
+          this.getArtifacts();
+        } else{
+          this.$message("上传失败")
+        }
+      }).catch(function (error) { // 请求失败处理
+        console.log(error);
+      });
+    },
+
+    //提交testcase文件和相关信息
+    submitTestcaseForm(event) {
+      event.preventDefault();
+      let formData = new FormData();
+      formData.append('username', this.username);
+      formData.append('projectId', this.productId);
+      formData.append('description', this.testcaseForm.description);
+      formData.append('input', this.testcaseForm.input);
+      formData.append('output', this.testcaseForm.output);
+      formData.append('inputDescription', this.testcaseForm.inputDescription);
+      formData.append('outPutDescription', this.testcaseForm.outputDescription);
+      formData.append('status', this.testcaseForm.status);
+      formData.append('uploadFile', this.testcaseForm.file);
+
+      let config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+      this.$axios.post('/contributor/' + this.username + '/product/' + this.productId + '/testcase', formData, config).then(res => {
+        if (res.status == 200) {
+          console.log(res)
+          this.$message("上传成功");
+          this.getTestcases();
+        } else{
+          this.$message("上传失败")
+        }
+      }).catch(function (error) { // 请求失败处理
+        console.log(error);
+      });
+    },
+
+    //下载code文件
+    downloadCode: function (index) {
+      this.$axios.get('/contributor/' + this.username + '/product/' + this.productId + '/file', {
+        params: {
+          fileId: this.codes[index].id,
+          type: 'code',
+        }
+      })
+        .then(res => {
+          if (res.status == 200) {
+            console.log(res);
+            this.$message("下载成功")
+          } else {
+            this.$message("下载失败")
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+
+    //下载artifact文件
+    downloadArtifact: function (index) {
+      this.$axios.get('/contributor/' + this.username + '/product/' + this.productId + '/file', {
+        params: {
+          fileId: this.artifacts[index].id,
+          type: 'artifact',
+        }
+      })
+        .then(res => {
+          if (res.status == 200) {
+            console.log(res);
+            this.$message("下载成功")
+          } else {
+            this.$message("下载失败")
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+
+    //下载testcase文件
+    downloadTestcase: function (index) {
+      this.$axios.get('/product/' + this.productId + '/testcases')
+        .then(res => {
+          if (res.status == 200) {
+            console.log(res);
+            this.$message("下载成功")
+          } else {
+            this.$message("下载失败")
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+
+    //手风琴面板事件触发
+    handleChange: function (val) {
+      console.log(val);
     },
 
     //切换标签页事件触发
     handleClick(tab, event) {
       if (tab.name == 'first') {
         this.getProductInformation();
+      }
+      if (tab.name == 'issues'){
+        this.getIssues();
+      }
+      if (tab.name == 'code'){
+        this.getCodes();
+      }
+      if (tab.name == 'artifact'){
+        this.getArtifacts();
+      }
+      if (tab.name == 'testcase'){
+        this.getTestcases();
       }
       //this.tableData = []
       if (tab.name == 'docker') {
@@ -233,6 +619,7 @@ export default {
         if (res.data['code']==200){
           let datalist = [];
           datalist = res.data['data'];
+          this.artifacts = [];
           for (let i = 0, length = datalist.length; i < length; i++) {
             let artifact = {
               name: datalist[i].fileName,

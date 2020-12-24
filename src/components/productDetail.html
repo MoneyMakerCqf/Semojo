@@ -33,12 +33,36 @@
                 </el-table-column>
               </el-table>
               <br/>
-              <el-button type="success" size="mini" v-on:click="showEditPage" v-if="role == 2 || role == 3">
+              <el-button type="success" size="mini" v-on:click="showEditPage" v-if="this.role == 2 || this.role == 3">
                 Edit Product Information
               </el-button>
             </el-col>
           </el-tab-pane>
-          <el-tab-pane label="Issues" name="issues"></el-tab-pane>
+          <el-tab-pane label="Issues" name="issues">
+            <el-col :span="16" :offset="4">
+            <el-collapse v-model="activeName" accordion @change="handleChange">
+              <el-collapse-item v-for="(issue, index) in issues" v-bind:title="issue.title" v-bind:key="index + 1" v-bind:name="index + 1" >
+                  <div>
+                    <h4>Outline</h4>
+                    <el-divider></el-divider>
+                    <p>{{issue.outline}}</p>
+                    <h4>Context</h4>
+                    <el-divider></el-divider>
+                    <p>{{issue.context}}</p>
+                    <h4>SubIssues</h4>
+                    <el-divider></el-divider>
+                    <el-button type="success" size="mini" v-on:click="showSubIssuePage">
+                      Add SubIssue
+                    </el-button>
+                  </div>
+              </el-collapse-item>
+            </el-collapse>
+              <br/>
+              <el-button type="success" size="mini" v-on:click="showIssuePage">
+                Add Issue
+              </el-button>
+            </el-col>
+          </el-tab-pane>
           <el-tab-pane label="Docker" name="docker" align="center">
             <div align="left" style="width: 80%">
               <h3>Choose an artifact</h3>
@@ -91,7 +115,78 @@
               <el-button type="text" @click="addtestcase()" >Add testcase</el-button>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="Document" name="document"></el-tab-pane>
+          <el-tab-pane label="Code" name="code" v-if="this.role == 2 || this.role == 3">
+            <el-col :span="16" :offset="4">
+            <div class="products">
+              <div style="display: flex;">
+                <div style="width: 20%;display: flex;margin-left: 85%;margin-bottom: 10px">
+                  <el-button type="success" size="mini" @click="showUploadPage">Add</el-button>
+                </div>
+              </div>
+              <div class="show-products">
+                <ul class="list">
+                  <li class="list-item" v-for="(code,index) in codes">
+                    <div style="display: block;margin-left:5%;margin-top:1.5%;width: 60%">
+                      <h1 style="font-size: 1rem;display:table-cell;">{{code.fileName}}</h1>
+                    </div>
+                    <div style="flex: right;display: block;width:40%;margin-left:15%;margin-top: 6px;margin-bottom: 5px">
+                      <el-button type="primary" size="mini" @click="downloadCode(index)">Download</el-button>
+                      <el-button type="plain" size="mini">Delete</el-button>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            </el-col>
+          </el-tab-pane>
+          <el-tab-pane label="Artifact" name="artifact" v-if="this.role == 2 || this.role == 3">
+            <el-col :span="16" :offset="4">
+              <div class="products">
+                <div style="display: flex;">
+                  <div style="width: 20%;display: flex;margin-left: 85%;margin-bottom: 10px">
+                    <el-button type="success" size="mini" @click="showArtifactPage">Add</el-button>
+                  </div>
+                </div>
+                <div class="show-products">
+                  <ul class="list">
+                    <li class="list-item" v-for="(artifact,index) in artifacts">
+                      <div style="display: block;margin-left:5%;margin-top:1.5%;width: 60%">
+                        <h1 style="font-size: 1rem;display:table-cell;">{{artifact.fileName}}</h1>
+                      </div>
+                      <div style="flex: right;display: block;width:40%;margin-left:15%;margin-top: 6px;margin-bottom: 5px">
+                        <el-button type="primary" size="mini" @click="downloadArtifact(index)">Download</el-button>
+                        <el-button type="plain" size="mini">Delete</el-button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </el-col>
+          </el-tab-pane>
+          <el-tab-pane label="Test Case" name="testcase" v-if="this.role == 2 || this.role == 3">
+            <el-col :span="16" :offset="4">
+              <div class="products">
+                <div style="display: flex;">
+                  <div style="width: 20%;display: flex;margin-left: 85%;margin-bottom: 10px">
+                    <el-button type="success" size="mini" @click="showTestcasePage">Add</el-button>
+                  </div>
+                </div>
+                <div class="show-products">
+                  <ul class="list">
+                    <li class="list-item" v-for="(testcase,index) in testcases">
+                      <div style="display: block;margin-left:5%;margin-top:1.5%;width: 60%">
+                        <h1 style="font-size: 1rem;display:table-cell;">{{testcase.fileName}}</h1>
+                      </div>
+                      <div style="flex: right;display: block;width:40%;margin-left:15%;margin-top: 6px;margin-bottom: 5px">
+                        <el-button type="primary" size="mini" @click="downloadTestcase(index)">Download</el-button>
+                        <el-button type="plain" size="mini">Delete</el-button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </el-col>
+          </el-tab-pane>
         </el-tabs>
 
         <el-dialog title="Add new testcase" :visible.sync="dialogResultVisible">
@@ -112,6 +207,7 @@
           </el-form>
           <el-button type="text" @click="submitForm('ruleForm')">Add into table</el-button>
         </el-dialog>
+
         <!--更新产品信息-->
         <el-dialog title="Product Information" :visible.sync="productInfoVisible" width="30%">
           <el-form class="product" ref="form" :model="editProduct" size="mini">
@@ -161,7 +257,134 @@
             </el-form-item>
           </el-form>
         </el-dialog>
+
+<!--        Add Issue Dialog-->
+        <el-dialog title="Issue Information" :visible.sync="IssueInfoVisible" width="30%">
+          <el-form class="issue" ref="form" :model="createIssue" size="mini">
+            <el-form-item label="">
+              <el-input v-model="createIssue.title" placeholder="Issue Title">
+                <template slot="prepend">Title</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="">
+              <el-input v-model="createIssue.outline" placeholder="Issue Outline">
+                <template slot="prepend">Outline</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="">
+              <el-input v-model="createIssue.context" placeholder="Issue Context">
+                <template slot="prepend">Context</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item size="large">
+              <el-button type="primary" @click="updateIssue" size="mini">Save</el-button>
+              <el-button type="info" @click="cancel" size="mini">Cancel</el-button>
+            </el-form-item>
+          </el-form>
+        </el-dialog>
+
+<!--        add subIssue//to do-->
+        <el-dialog title="SubIssue Information" :visible.sync="SubIssueInfoVisible" width="30%">
+          <el-form class="subIssue" ref="form" :model="createSubIssue" size="mini">
+            <el-form-item label="">
+              <el-input v-model="createSubIssue.answerToWho" placeholder="Answer to who?">
+                <template slot="prepend">Answer to who</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="">
+              <el-input v-model="createSubIssue.context" placeholder="SubIssue Context">
+                <template slot="prepend">Context</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item size="large">
+              <el-button type="primary" @click="updateSubIssue" size="mini">Save</el-button>
+              <el-button type="info" @click="cancel" size="mini">Cancel</el-button>
+            </el-form-item>
+          </el-form>
+        </el-dialog>
       </div>
+
+      <!--上传code文件-->
+      <el-dialog title="Uploads Files" :visible.sync="dialogCodeVisible" width="30%">
+        <el-form :model="codeForm" size="mini">
+          <el-form-item label="Description">
+            <el-input v-model="codeForm.description"></el-input>
+          </el-form-item>
+          <el-form-item label="Language">
+            <el-select v-model="codeForm.lang" placeholder="Please choose language">
+              <el-option label="C++" value="cplusplus"></el-option>
+              <el-option label="Java" value="java"></el-option>
+              <el-option label="Python" value="python"></el-option>
+              <el-option label="C" value="c"></el-option>
+              <el-option label="Golang" value="golang"></el-option>
+              <el-option label="Javascript" value="javascript"></el-option>
+            </el-select>
+          </el-form-item>
+          <input type="file" @change="getFile($event)">
+          <el-button type="success" @click="submitCodeForm($event)">Submit</el-button>
+        </el-form>
+      </el-dialog>
+
+      <!--上传artifact文件-->
+      <el-dialog title="Uploads Artifacts" :visible.sync="dialogArtifactVisible" width="30%">
+        <el-form :model="artifactForm" size="mini">
+          <el-form-item label="Description">
+            <el-input v-model="artifactForm.description"></el-input>
+          </el-form-item>
+          <el-form-item label="Version">
+            <el-input v-model="artifactForm.version"></el-input>
+          </el-form-item>
+          <el-form-item label="Status">
+            <el-select v-model="artifactForm.status" placeholder="Please choose status">
+              <el-option label="Beta" value="beta"></el-option>
+              <el-option label="Final Version" value="finalVersion"></el-option>
+              <el-option label="Deprecated" value="deprecated"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Language">
+            <el-select v-model="artifactForm.lang" placeholder="Please choose language">
+              <el-option label="C++" value="cplusplus"></el-option>
+              <el-option label="Java" value="java"></el-option>
+              <el-option label="Python" value="python"></el-option>
+              <el-option label="C" value="c"></el-option>
+              <el-option label="Golang" value="golang"></el-option>
+              <el-option label="Javascript" value="javascript"></el-option>
+            </el-select>
+          </el-form-item>
+          <input type="file" @change="getArtifact($event)">
+          <el-button type="success" @click="submitArtifactForm($event)">Submit</el-button>
+        </el-form>
+      </el-dialog>
+
+      <!--上传testcase文件-->
+      <el-dialog title="Uploads Testcase" :visible.sync="dialogTestcaseVisible" width="30%">
+        <el-form :model="testcaseForm" size="mini">
+          <el-form-item label="Description">
+            <el-input v-model="testcaseForm.description"></el-input>
+          </el-form-item>
+          <el-form-item label="input">
+            <el-input v-model="testcaseForm.input"></el-input>
+          </el-form-item>
+          <el-form-item label="output">
+            <el-input v-model="testcaseForm.output"></el-input>
+          </el-form-item>
+          <el-form-item label="inputDescription">
+            <el-input v-model="testcaseForm.inputDescription"></el-input>
+          </el-form-item>
+          <el-form-item label="outputDescription">
+            <el-input v-model="testcaseForm.outputDescription"></el-input>
+          </el-form-item>
+          <el-form-item label="Status">
+            <el-select v-model="testcaseForm.status" placeholder="Please choose status">
+              <el-option label="Pass" value="pass"></el-option>
+              <el-option label="Fail" value="fail"></el-option>
+              <el-option label="Untested" value="untested"></el-option>
+            </el-select>
+          </el-form-item>
+          <input type="file" @change="getTestcase($event)">
+          <el-button type="success" @click="submitTestcaseForm($event)">Submit</el-button>
+        </el-form>
+      </el-dialog>
 
     </el-col>
   </el-row>

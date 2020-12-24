@@ -305,7 +305,7 @@ export default {
       })
     },
 
-    //创建新产品(有问题）
+    //创建新产品
     creatNewProduct: function () {
       let fd = new FormData();
       fd.append('productName', this.newProduct.productName);
