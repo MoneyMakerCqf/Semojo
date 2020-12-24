@@ -409,7 +409,8 @@ export default {
     },
 
     clickDownload(index){
-
+        this.$router.push('/product/' + this.productsPurchased[index].id);
+        localStorage.role = 2;
     }
   },
 
