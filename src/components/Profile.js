@@ -1,3 +1,5 @@
+import fa from "element-ui/src/locale/lang/fa";
+
 export default {
   name: "Profile",
   data() {
@@ -47,6 +49,8 @@ export default {
       activeTab: 'first',
       avatarImage: '../assets/bg3.jpg',
       loading: false,
+      dialogFormVisible: false,
+      tractionid: '',
 
       //个人信息
       origin: {
@@ -89,6 +93,9 @@ export default {
 
       //Products Purchased
       productsPurchased: [],
+
+      //traction not finished
+      tractionCreated: [],
 
       //申请信息
       permissions: [],
@@ -141,6 +148,8 @@ export default {
       } else if (tab.name == 'seventh') {
         //To be contributor
         console.log("seventh");
+      } else if (tab.name == 'eighth'){
+        this.getTraction();
       }
     },
 
@@ -232,6 +241,55 @@ export default {
           })
         }
       });
+    },
+
+    getTraction(){
+      this.loading=true
+      this.$axios({
+        method: 'get',
+        url: '/customer/'+this.username+'/transactions'
+      }).then(res =>{
+        if (res.data['code']==200){
+          let datalist = res.data['data'];
+          for (let i = 0, length = datalist.length; i < length; i++) {
+            let traction = {
+              id: datalist[i].id,
+              status: datalist[i].status,
+            }
+            this.tractionCreated.push(traction);
+          }
+          this.loading=false
+        }
+      })
+    },
+
+    purchase(index){
+      this.tractionid = this.tractionCreated[index].id
+      this.dialogFormVisible=true
+    },
+
+    paysuccess(){
+      this.$axios({
+        method: 'put',
+        url: '/customer/'+this.username+'/transaction/'+this.tractionid,
+        params: {
+          status: 'PurchasedSuccess'
+        }
+      }).then(res =>{
+        if(res.data['code']==200){
+          this.dialogFormVisible=false
+          this.$message({
+            message:'purchase success',
+            type:'success'
+          })
+          location.reload();
+        }else {
+          this.$message({
+            message:'purchase unsuccess',
+            type:'warning'
+          })
+        }
+      })
     },
 
     //更新用户信息

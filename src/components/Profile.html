@@ -147,6 +147,30 @@
               </li>
             </ul>
           </el-tab-pane>
+          <el-tab-pane label="Traction Created" name="eighth">
+            <h1 class="titleName">Traction Created</h1>
+            <el-divider></el-divider>
+            <ul class="list">
+              <li class="list-item" v-for="(traction, index) in tractionCreated">
+                <div style="display: block;margin-left:5%;margin-top:2%;width: 60%" v-bind:class="traction.id">
+                  <h1 style="font-size: 1rem;margin-left: 20%;vertical-align: middle;display: table-cell;">{{traction.id}}</h1>
+                  &nbsp;&nbsp;
+                  <h1 style="font-size: 1rem;margin-left: 20%;vertical-align: middle;display: table-cell;">{{traction.status}}</h1>
+                </div>
+                <div style="display: block;width:40%;margin-left:15%;margin-top: 6px;margin-bottom: 5px">
+                  <el-button type="primary" size="mini" @click="purchase(index)">Purchase</el-button>
+                </div>
+              </li>
+            </ul>
+          </el-tab-pane>
+          <el-dialog title="Pay for it" :visible.sync="dialogFormVisible">
+            <el-card :body-style="{ padding: '0px' }">
+              <img src="../assets/payment.jpg" style="height: 400px; width: 250px; display: block;">
+            </el-card>
+            <el-button @click="paysuccess" type="primary">
+              Already paid~
+            </el-button>
+          </el-dialog>
           <el-tab-pane label="To be Contributor" name="seventh" v-if="role == 1">
             <h1 class="titleName">Apply to be a Contributor</h1>
             <el-divider></el-divider>
