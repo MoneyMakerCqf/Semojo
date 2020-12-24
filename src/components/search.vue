@@ -86,36 +86,36 @@
         </div>
       </el-tab-pane>
 
-      <el-tab-pane label="Issues" name="Issue">
-        <div style="margin-top:25px; margin-left:50px;">
-          <div style="display:flex">
-            <div style="width:50%" align="left"><h4>{{total}} repository results</h4></div>
-          </div>
-          <template>
-            <div class="infinite-list-wrapper" style="overflow:auto;width:100%;height:350px;">
-              <ul
-                class="list"
-                v-infinite-scroll="load"
-                infinite-scroll-disabled="disabled"
-                style="list-style:none;">
-                <li v-for="item in show_list" class="list-item">
-                  <div align="left">
-                    <i class="el-icon-notebook-2"></i>
-                    <el-link
-                      target="_blank"
-                      style="color:#000;text-decoration:none;"
-                      class=navigation_fontsize>
-                      {{item.name}}
-                    </el-link>
-                    <div> Issue: {{item.issue}}</div>
-                  </div>
-                </li>
-              </ul>
-              <p v-if="loading">loading&nbsp;&nbsp;<i class="el-icon-loading"></i></p>
-            </div>
-          </template>
-        </div>
-      </el-tab-pane>
+<!--      <el-tab-pane label="Issues" name="Issue">-->
+<!--        <div style="margin-top:25px; margin-left:50px;">-->
+<!--          <div style="display:flex">-->
+<!--            <div style="width:50%" align="left"><h4>{{total}} repository results</h4></div>-->
+<!--          </div>-->
+<!--          <template>-->
+<!--            <div class="infinite-list-wrapper" style="overflow:auto;width:100%;height:350px;">-->
+<!--              <ul-->
+<!--                class="list"-->
+<!--                v-infinite-scroll="load"-->
+<!--                infinite-scroll-disabled="disabled"-->
+<!--                style="list-style:none;">-->
+<!--                <li v-for="item in show_list" class="list-item">-->
+<!--                  <div align="left">-->
+<!--                    <i class="el-icon-notebook-2"></i>-->
+<!--                    <el-link-->
+<!--                      target="_blank"-->
+<!--                      style="color:#000;text-decoration:none;"-->
+<!--                      class=navigation_fontsize>-->
+<!--                      {{item.name}}-->
+<!--                    </el-link>-->
+<!--                    <div> Issue: {{item.issue}}</div>-->
+<!--                  </div>-->
+<!--                </li>-->
+<!--              </ul>-->
+<!--              <p v-if="loading">loading&nbsp;&nbsp;<i class="el-icon-loading"></i></p>-->
+<!--            </div>-->
+<!--          </template>-->
+<!--        </div>-->
+<!--      </el-tab-pane>-->
 
       <el-tab-pane label="Users" name="Users">
         <div style="margin-top:25px; margin-left:50px;">
@@ -165,16 +165,7 @@ export default {
       searchitem: this.$route.params.searchitem,
 
       show_list: [],
-      list: [{id:1, name:"cqfwuwuwu", star:4.5, price:"50", contributors:"cqf,zf", tags:"Java", description:"this is my final ripple, JOJO", DBid:5,update_time:2020/11/24,score:82},
-        {id:2, name:"cqfwuwuwu", star:5, price:"50", contributors:"cqf,zf", tags:"Java", description:"this is my final ripple, JOJO", DBid:5,update_time:2020/11/24,score:82},
-        {id:3, name:"cqfwuwuwu", star:3, price:"50", contributors:"cqf,zf", tags:"Java", description:"this is my final ripple, JOJO", DBid:5,update_time:2020/11/24,score:82},
-        {id:4, name:"cqfwuwuwu", star:2, price:"50", contributors:"cqf,zf", tags:"Java", description:"this is my final ripple, JOJO", DBid:5,update_time:2020/11/24,score:82},
-        {id:5, name:"cqfwuwuwu", star:4, price:"50", contributors:"cqf,zf", tags:"Java", description:"this is my final ripple, JOJO", DBid:5,update_time:2020/11/24,score:82},
-        {id:6, name:"cqfwuwuwu", star:3, price:"50", contributors:"cqf,zf", tags:"Java", description:"this is my final ripple, JOJO", DBid:5,update_time:2020/11/24,score:82},
-        {id:7, name:"cqfwuwuwu", star:4.5, price:"50", contributors:"cqf,zf", tags:"Java", description:"this is my final ripple, JOJO", DBid:5,update_time:2020/11/24,score:82},
-        {id:8, name:"cqfwuwuwu", star:5, price:"50", contributors:"cqf,zf", tags:"Java", description:"this is my final ripple, JOJO", DBid:5,update_time:2020/11/24,score:82},
-        {id:9, name:"cqfwuwuwu", star:5, price:"50", contributors:"cqf,zf", tags:"Java", description:"this is my final ripple, JOJO", DBid:5,update_time:2020/11/24,score:82},
-        {id:10, name:"cqfwuwuwu", star:4, price:"50", contributors:"cqf,zf", tags:"Java", description:"this is my final ripple, JOJO", DBid:5,update_time:2020/11/24,score:82},],
+      list: [],
 
       options: [{
         value: 'score',
@@ -218,7 +209,7 @@ export default {
       if(tab.name=="Products"){
         this.$axios({
           method: 'get',
-          url: 'search/product',
+          url: '/search/product',
           params: {
             keyword: this.$route.params.searchitem,
           },
@@ -261,10 +252,9 @@ export default {
     changeToCode() {
       this.$axios({
         method: 'get',
-        url: '/codes',
+        url: '/search/code',
         params: {
-          type: 'Codes',
-          search: window.localStorage.getItem("search"),
+          keyword: this.$route.params.searchitem,
         },
       }).then(res => {  //res是返回结果
         if (res.data['code']==200){
@@ -286,34 +276,34 @@ export default {
         }
       })
     },
-    changeToIssue() {
-      this.$axios({
-        method: 'get',
-        url: '/issues',
-        params: {
-          type: 'Issues',
-          search: window.localStorage.getItem("search"),
-        },
-      }).then(res => {  //res是返回结果
-        if (res.data['code']==200){
-          let datalist = [];
-          datalist = res.data['data'];
-          for (let i = 0, length = datalist.length; i < length; i++) {
-            let product = {
-              id : i+1,
-              name: datalist[i].userName,
-              issue: datalist[i].issue,
-            };
-            this.list.push(product);
-          }
-          this.total = this.list.length;
-          for (let i=this.id; i<5 && i<this.total; i++){
-            this.show_list.push(this.list[i]);
-            this.id++;
-          }
-        }
-      })
-    },
+    // changeToIssue() {
+    //   this.$axios({
+    //     method: 'get',
+    //     url: '/issues',
+    //     params: {
+    //       type: 'Issues',
+    //       search: window.localStorage.getItem("search"),
+    //     },
+    //   }).then(res => {  //res是返回结果
+    //     if (res.data['code']==200){
+    //       let datalist = [];
+    //       datalist = res.data['data'];
+    //       for (let i = 0, length = datalist.length; i < length; i++) {
+    //         let product = {
+    //           id : i+1,
+    //           name: datalist[i].userName,
+    //           issue: datalist[i].issue,
+    //         };
+    //         this.list.push(product);
+    //       }
+    //       this.total = this.list.length;
+    //       for (let i=this.id; i<5 && i<this.total; i++){
+    //         this.show_list.push(this.list[i]);
+    //         this.id++;
+    //       }
+    //     }
+    //   })
+    // },
     changeToUser() {
       this.$axios({
         method: 'get',
@@ -341,12 +331,13 @@ export default {
         }
       })
     },
+
   },
   mounted() {
     this.img_src = window.localStorage.getItem('img_src')
     this.$axios({
       method: 'get',
-      url: 'search/product',
+      url: '/search/product',
       params: {
         keyword: this.$route.params.searchitem,
       },
@@ -383,7 +374,6 @@ export default {
 
 <style scoped>
 .list .list-item {
-  height: 125px;
   line-height: 20px;
   background: #e8f3fe;
   margin: 10px;

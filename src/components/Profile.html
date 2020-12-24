@@ -14,7 +14,7 @@
   <el-row>
     <el-col :span="15" :offset="5">
       <div>
-        <el-tabs :tab-position="tabPosition" v-model="activeTab" style="height: 700px;" type="border-card" @tab-click="handleClick">
+        <el-tabs :tab-position="tabPosition" v-model="activeTab" style="height: 700px;" type="border-card" @tab-click="handleClick"  v-loading="loading">
           <el-tab-pane label="Your Profile" name="first">
             <h1 class="titleName">Public Profile</h1>
             <el-divider></el-divider>
@@ -115,7 +115,7 @@
           <el-tab-pane label="Products Contributed" name="fifth" v-if="role == 2 || role == 3">
             <h1 class="titleName">Products Contributed</h1>
             <el-divider></el-divider>
-            <ul class="list">
+            <ul class="list" >
               <li class="list-item" v-for="(product, index) in productsContributed">
                 <div style="display: block;margin-left:5%;margin-top:2%;width: 60%"
                      v-bind:class="product.productId">

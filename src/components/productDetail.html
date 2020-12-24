@@ -67,7 +67,7 @@
             <div align="left" style="width: 80%">
               <h3>Choose an artifact</h3>
               <div v-for="arti in artifacts" >
-                <el-radio v-model="radio" label="arti.id">{{arti.name}}</el-radio>
+                <el-radio v-model="radio" v-bind:label="arti.id">{{arti.name}}</el-radio>
               </div>
               <br>
               <h3>Choose testcase to run</h3>

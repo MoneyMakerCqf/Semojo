@@ -111,6 +111,7 @@ export default {
     },
     searchfor(searchitem){
       this.$router.push('/search/'+searchitem);
+      location.reload();
     }
   }
 }

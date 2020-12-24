@@ -46,6 +46,7 @@ export default {
       activeName: '',
       activeTab: 'first',
       avatarImage: '../assets/bg3.jpg',
+      loading: false,
 
       //个人信息
       origin: {
@@ -206,6 +207,7 @@ export default {
 
     //获取用户已购买的产品的信息
     getPurchased: function () {
+      this.loading=true
       this.$axios({
         method: 'get',
         url: '/customer/' + this.username + '/userpage/products',
@@ -222,6 +224,7 @@ export default {
             }
             this.productsPurchased.push(product);
           }
+          this.loading=false
         } else {
           this.$message({
             message: 'connect wrong',
@@ -277,6 +280,7 @@ export default {
 
     //获取contributor贡献的所有产品列表
     getContributedProducts: function () {
+      this.loading=true
       this.$axios({
         method: 'get',
         url: '/contributor/' + this.username + '/userpage/contributed_products',
@@ -294,6 +298,7 @@ export default {
             }
             this.productsContributed.push(product);
           }
+          this.loading=false
         } else {
           this.$message({
             message: 'connect wrong',
