@@ -552,60 +552,65 @@ export default {
 
     //下载code文件
     downloadCode: function (index) {
-      this.$axios.get('/contributor/' + this.username + '/product/' + this.productId + '/file', {
-        params: {
-          fileId: this.codes[index].id,
-          type: 'code',
-        }
-      })
-        .then(res => {
-          if (res.status == 200) {
-            console.log(res);
-            this.$message("下载成功")
-          } else {
-            this.$message("下载失败")
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      window.location.href = '/contributor/' + this.username + '/product/' + this.productId + '/file'
+        + '?fileId=' + this.codes[index].id + '&type=code';
+      // this.$axios.get('/contributor/' + this.username + '/product/' + this.productId + '/file', {
+      //   params: {
+      //     fileId: this.codes[index].id,
+      //     type: 'code',
+      //   }
+      // })
+      //   .then(res => {
+      //     if (res.status == 200) {
+      //       console.log(res);
+      //       this.$message("下载成功")
+      //     } else {
+      //       this.$message("下载失败")
+      //     }
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   });
     },
 
     //下载artifact文件
     downloadArtifact: function (index) {
-      this.$axios.get('/contributor/' + this.username + '/product/' + this.productId + '/file', {
-        params: {
-          fileId: this.artifacts[index].id,
-          type: 'artifact',
-        }
-      })
-        .then(res => {
-          if (res.status == 200) {
-            console.log(res);
-            this.$message("下载成功")
-          } else {
-            this.$message("下载失败")
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      window.location.href = '/contributor/' + this.username + '/product/' + this.productId + '/file' + '?'
+        + 'fileId=' + this.artifacts[index].id + '&type=artifact';
+      // this.$axios.get('/contributor/' + this.username + '/product/' + this.productId + '/file', {
+      //   params: {
+      //     fileId: this.artifacts[index].id,
+      //     type: 'artifact',
+      //   }
+      // })
+      //   .then(res => {
+      //     if (res.status == 200) {
+      //       console.log(res);
+      //       this.$message("下载成功")
+      //     } else {
+      //       this.$message("下载失败")
+      //     }
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   });
     },
 
     //下载testcase文件
     downloadTestcase: function (index) {
-      this.$axios.get('/product/' + this.productId + '/testcases')
-        .then(res => {
-          if (res.status == 200) {
-            console.log(res);
-            this.$message("下载成功")
-          } else {
-            this.$message("下载失败")
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      window.location.href = '/product/' + this.productId + '/testcases';
+      // this.$axios.get('/product/' + this.productId + '/testcases')
+      //   .then(res => {
+      //     if (res.status == 200) {
+      //       console.log(res);
+      //       this.$message("下载成功")
+      //     } else {
+      //       this.$message("下载失败")
+      //     }
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   });
     },
 
     //手风琴面板事件触发
@@ -631,6 +636,10 @@ export default {
       }
       if (tab.name == 'testcase'){
         this.getTestcases();
+      }
+      if (tab.name == 'docker') {
+        this.getArtifactInformation();
+        this.getTestcaseInformation();
       }
     },
 
@@ -665,6 +674,7 @@ export default {
       }).then(res=>{
         if (res.data['code']==200){
           let datalist = [];
+          this.tableData = [];
           datalist = res.data['data'];
           for (let i = 0, length = datalist.length; i < length; i++) {
             let testcase = {
