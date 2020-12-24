@@ -250,6 +250,7 @@ export default {
         url: '/customer/'+this.username+'/transactions'
       }).then(res =>{
         if (res.data['code']==200){
+          this.tractionCreate=[];
           let datalist = res.data['data'];
           this.tractionCreated = [];
           for (let i = 0, length = datalist.length; i < length; i++) {

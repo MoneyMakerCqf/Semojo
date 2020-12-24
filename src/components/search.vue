@@ -1,6 +1,6 @@
 <template>
   <div style="margin-left: 15%;margin-top: 2%; width: 70%" align="center">
-    <el-tabs tab-position=left style="height: 550px;" v-model="activeTab" @tab-click="handleTabClick">
+    <el-tabs tab-position=left style="height: 550px;" v-model="activeTab" @tab-click="handleTabClick" v-loading="loading">
       <el-tab-pane label="Products" style="height: 550px" name="Products">
         <div style="margin-top:25px; margin-left:50px;">
           <div style="display:flex">
@@ -143,7 +143,6 @@
                   </div>
                 </li>
               </ul>
-              <p v-if="loading">loading&nbsp;&nbsp;<i class="el-icon-loading"></i></p>
             </div>
           </template>
         </div>
@@ -206,6 +205,7 @@ export default {
       this.total = 0;
       this.show_list = [];
       this.list = [];
+      this.loading = true;
       if(tab.name=="Products"){
         this.$axios({
           method: 'get',
@@ -216,20 +216,19 @@ export default {
         }).then(res => {  //res是返回结果
           if (res.data['code']==200){
             let datalist = [];
-            datalist = res.data['data'];
+            datalist = res.data['data'].productNameLike;
             for (let i = 0, length = datalist.length; i < length; i++) {
               let product = {
                 id : i+1,
                 name: datalist[i].productName,
-                star: datalist[i].revierStar,
+                star: datalist[i].reviewStar,
                 price: datalist[i].currentPrice,
                 contributors: datalist[i].creator,
                 language: datalist[i].language,
                 tags: datalist[i].tags,
                 description: datalist[i].outline,
-                DBid: datalist[i].productId,
+                //DBid: datalist[i].productId,
                 update_time: datalist[i].update_time,
-                score: datalist[i].score,
               };
               this.list.push(product);
             }
@@ -238,6 +237,7 @@ export default {
               this.show_list.push(this.list[i]);
               this.id++;
             }
+            this.loading = false
           }
         })
       }else if(tab.name=="Codes"){
@@ -259,11 +259,10 @@ export default {
       }).then(res => {  //res是返回结果
         if (res.data['code']==200){
           let datalist = [];
-          datalist = res.data['data'];
+          datalist = res.data['data'].finalversion;
           for (let i = 0, length = datalist.length; i < length; i++) {
             let product = {
-              id : i+1,
-              name: datalist[i].ProjectName,
+              name: datalist[i].productName,
               code: datalist[i].code,
             };
             this.list.push(product);
@@ -273,6 +272,7 @@ export default {
             this.show_list.push(this.list[i]);
             this.id++;
           }
+          this.loading = false
         }
       })
     },
@@ -328,12 +328,14 @@ export default {
             this.show_list.push(this.list[i]);
             this.id++;
           }
+          this.loading = false
         }
       })
     },
 
   },
   mounted() {
+    this.loading=true
     this.img_src = window.localStorage.getItem('img_src')
     this.$axios({
       method: 'get',
@@ -344,20 +346,19 @@ export default {
     }).then(res => {  //res是返回结果
       if (res.data['code']==200){
         let datalist = [];
-        datalist = res.data['data'];
+        datalist = res.data['data'].productNameLike;
         for (let i = 0, length = datalist.length; i < length; i++) {
           let product = {
             id : i+1,
             name: datalist[i].productName,
-            star: datalist[i].revierStar,
+            star: datalist[i].reviewStar,
             price: datalist[i].currentPrice,
             contributors: datalist[i].creator,
             language: datalist[i].language,
             tags: datalist[i].tags,
             description: datalist[i].outline,
-            DBid: datalist[i].productId,
+            //DBid: datalist[i].productId,
             update_time: datalist[i].update_time,
-            score: datalist[i].score,
           };
           this.list.push(product);
         }
@@ -366,6 +367,7 @@ export default {
           this.show_list.push(this.list[i]);
           this.id++;
         }
+        this.loading = false
       }
     })
   },

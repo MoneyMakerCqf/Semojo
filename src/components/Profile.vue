@@ -12,7 +12,6 @@
 
 .list .list-item {
   display: flex;
-  height: 40px;
   background: #e8f3fe;
   margin: 10px;
   color: black;

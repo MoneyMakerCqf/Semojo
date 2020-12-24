@@ -117,6 +117,7 @@
       <el-card :body-style="{ padding: '0px' }">
         <img src="../assets/payment.jpg" class="image" >
       </el-card>
+      <br>
       <el-button @click="paysuccess" type="primary">
         Already paid~
       </el-button>

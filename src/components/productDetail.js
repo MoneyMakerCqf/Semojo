@@ -16,7 +16,7 @@ export default {
       dialogCodeVisible: false,
       dialogArtifactVisible: false,
       dialogTestcaseVisible: false,
-      testresult: 'Result is: This team pass CS307 OOAD successfully',
+      testresult: 'Result is: This team pass CS309 OOAD successfully',
       role: localStorage.role,
       activeName: '1',
       product: {
@@ -687,7 +687,7 @@ export default {
         url: '/product/'+this.productId+'/artifacts/'+ this.radio+'/'+this.tableData[index].id,
       }).then(res => {  //res是返回结果
         if (res.data['code'] == "200") {
-          this.testresult = res.data['testcode'];
+          this.testresult = res.data['data'];
           this.dialogResultVisible = true;
         } else {
           this.$message({
